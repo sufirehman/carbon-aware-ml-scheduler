@@ -12,13 +12,11 @@ st.markdown(
     """
     <style>
 
-    /* Animated dark gradient background */
     .stApp {
         background: radial-gradient(circle at top, #0f172a, #020617);
         color: white;
     }
 
-    /* HERO TITLE */
     .hero-title {
         font-size: 60px;
         font-weight: 800;
@@ -37,7 +35,6 @@ st.markdown(
         margin-bottom: 30px;
     }
 
-    /* GLASS CARDS */
     .card {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255,255,255,0.1);
@@ -53,17 +50,32 @@ st.markdown(
         border-color: rgba(0, 201, 255, 0.5);
     }
 
-    /* CTA BUTTON STYLE */
-    .cta {
-        text-align: center;
-        margin-top: 30px;
+    /* 🔥 FIX BUTTON STYLING */
+    div.stButton > button {
+        background: linear-gradient(90deg, #00C9FF, #92FE9D);
+        color: black !important;
+        font-weight: 700;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+        transition: 0.3s ease;
+    }
+
+    div.stButton > button:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 15px rgba(0, 201, 255, 0.5);
+        cursor: pointer;
+    }
+
+    div.stButton > button:focus {
+        outline: none;
     }
 
     </style>
     """,
     unsafe_allow_html=True
 )
-
 # ----------------------------
 # HERO SECTION
 # ----------------------------
@@ -74,16 +86,19 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ----------------------------
-# CTA BUTTONS
-# ----------------------------
+st.markdown("<br><br>", unsafe_allow_html=True)
+
 col1, col2, col3 = st.columns([1,2,1])
 
 with col2:
-    if st.button("🚀 Launch Platform"):
-        st.switch_page("pages/overview.py")
+    st.button("🚀 Launch Platform")
 
 st.markdown("<br>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns([1,2,1])
+
+with col2:
+    st.button("📊 View Live Dashboard")
 
 # ----------------------------
 # FEATURE CARDS (STARTUP STYLE)
@@ -139,14 +154,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# ----------------------------
-# FOOTER CTA
-# ----------------------------
-col1, col2, col3 = st.columns([1,2,1])
-
-with col2:
-    if st.button("📊 View Live Dashboard"):
-        st.switch_page("pages/overview.py")
