@@ -88,17 +88,21 @@ st.markdown(
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 
+# ----------------------------
+# CTA BUTTONS (SAME ROW)
+# ----------------------------
 col1, col2, col3 = st.columns([1,2,1])
 
 with col2:
-    st.button("🚀 Launch Platform")
+    b1, b2 = st.columns(2)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    with b1:
+        if st.button("🚀 Launch Platform"):
+            st.switch_page("pages/overview.py")
 
-col1, col2, col3 = st.columns([1,2,1])
-
-with col2:
-    st.button("📊 View Live Dashboard")
+    with b2:
+        if st.button("📊 View Live Dashboard"):
+            st.switch_page("pages/overview.py")
 
 # ----------------------------
 # FEATURE CARDS (STARTUP STYLE)
