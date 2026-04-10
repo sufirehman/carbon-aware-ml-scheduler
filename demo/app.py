@@ -152,8 +152,14 @@ st.markdown("<br><br>", unsafe_allow_html=True)
 # ----------------------------
 st.markdown(
     """
-    <div style="text-align:center; font-size:22px; color:#e2e8f0;">
-    Built for <b>sustainable AI infrastructure</b> and <b>carbon-efficient ML systems</b>
+    <div style="text-align:center; font-size:22px; color:#e2e8f0; max-width:900px; margin:auto;">
+
+    Built by <b>Sufiyan</b> as a carbon-aware AI infrastructure system for 
+    <b>sustainable machine learning training optimization</b>.<br><br>
+
+    This platform demonstrates how <b>real-time grid carbon intelligence</b> can be used to 
+    intelligently schedule ML workloads and reduce unnecessary CO₂ emissions in AI systems.
+
     </div>
     """,
     unsafe_allow_html=True
