@@ -4,3 +4,4 @@ numpy
 plotly
 matplotlib
 requests
+reportlab
