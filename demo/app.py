@@ -154,7 +154,7 @@ st.markdown(
     """
     <div style="text-align:center; font-size:22px; color:#e2e8f0; max-width:900px; margin:auto;">
 
-    Built by <b>Sufiyan</b> as a carbon-aware AI infrastructure system for 
+    Built by <b>Sufiyan Ul Rehman</b> as a carbon-aware AI infrastructure system for 
     <b>sustainable machine learning training optimization</b>.<br>
 
     This platform demonstrates how <b>real-time grid carbon intelligence</b> can be used to 
