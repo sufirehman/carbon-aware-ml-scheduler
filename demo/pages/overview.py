@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 from core.carbon_api import CarbonAPI
 from core.scheduler import CarbonScheduler
 from core.simulator import MLTrainingSimulator
+from core.report_generator import generate_report
 
 
 # ----------------------------
@@ -62,6 +63,16 @@ if st.button("🚀 Run Optimization"):
 
     savings = ((worst_emissions - best_emissions) / worst_emissions) * 100
 
+    if st.button("📄 Download Carbon Report"):
+    file = generate_report(savings, best, worst)
+
+    with open(file, "rb") as f:
+        st.download_button(
+            label="Download PDF",
+            data=f,
+            file_name="carbon_report.pdf",
+            mime="application/pdf"
+        )
     # =========================
     # 2. DASHBOARD HEADER (NEW)
     # =========================
