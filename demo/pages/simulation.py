@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 from core.carbon_api import CarbonAPI
 from core.scheduler import CarbonScheduler
 from core.simulator import MLTrainingSimulator
+from core.experiment import simulate_rl
 
 # ----------------------------
 # PAGE CONFIG
@@ -145,3 +146,28 @@ if st.button("🚀 Run Simulation"):
         This demonstrates that carbon-aware scheduling benefits scale across different ML workload sizes.
         """
     )
+
+        # ----------------------------
+    # 🤖 RL vs HEURISTIC COMPARISON (NEW SECTION)
+    # ----------------------------
+
+    st.markdown("## 🤖 RL vs Heuristic Comparison")
+
+    # Use same carbon data already fetched
+    carbon_values = df["carbon"].values
+
+    # RL simulation
+    rl_emissions = simulate_rl(carbon_values)
+
+    # Baseline (simple heuristic: immediate execution)
+    baseline_emissions = sum(carbon_values[:len(carbon_values)-1])
+
+    col1, col2 = st.columns(2)
+
+    col1.metric("⚙️ Heuristic (Immediate Run)", f"{baseline_emissions:.2f}")
+    col2.metric("🤖 RL Agent", f"{rl_emissions:.2f}")
+
+    # Improvement %
+    improvement = ((baseline_emissions - rl_emissions) / baseline_emissions) * 100
+
+    st.success(f"RL-based scheduling improves emissions by {improvement:.2f}% compared to naive execution.")
