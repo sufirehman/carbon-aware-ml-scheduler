@@ -1,23 +1,13 @@
+from core.rl_agent import RLScheduler
 import numpy as np
-from core.rl_agent import CarbonRLAgent
 
-def simulate_rl(carbon_data):
-    agent = CarbonRLAgent()
-    total_emissions = 0
+def simulate_rl(carbon_values, runs=50):
+    emissions = []
 
-    for i in range(len(carbon_data) - 1):
-        state = agent.get_state(carbon_data[i])
-        action = agent.choose_action(state)
+    for _ in range(runs):
+        agent = RLScheduler(carbon_values)
+        best_time = agent.train()
 
-        if action == 0:  # run now
-            emission = carbon_data[i]
-        else:  # delay
-            emission = carbon_data[i + 1]
+        emissions.append(carbon_values[best_time])
 
-        reward = -emission
-        next_state = agent.get_state(carbon_data[i + 1])
-
-        agent.update(state, action, reward, next_state)
-        total_emissions += emission
-
-    return total_emissions
+    return np.mean(emissions)
