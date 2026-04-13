@@ -8,166 +8,119 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from core.carbon_api import CarbonAPI
-from core.scheduler import CarbonScheduler
-from core.simulator import MLTrainingSimulator
-from core.experiment import simulate_rl
+from core.experiment import run_experiment
 
 # ----------------------------
 # PAGE CONFIG
 # ----------------------------
 st.set_page_config(
-    page_title="Simulation Lab",
+    page_title="Carbon Simulation Lab",
     layout="wide"
 )
 
 st.title("⚙️ Carbon Simulation Lab")
-st.markdown("Run multiple ML training scenarios and analyze carbon impact.")
+st.markdown("Run baseline, heuristic, and RL experiments with real emissions measurement.")
 
 # ----------------------------
-# INPUT CONTROLS
+# SIDEBAR SETTINGS
 # ----------------------------
-st.sidebar.header("🧪 Simulation Settings")
+st.sidebar.header("🧪 Experiment Settings")
 
-runs = st.sidebar.slider("Number of Simulations", 3, 20, 8)
-urgency = st.sidebar.selectbox("Urgency Level", ["low", "medium", "high"])
-
-durations = st.sidebar.multiselect(
-    "Training Durations (minutes)",
-    [30, 60, 120, 180, 240],
-    default=[30, 60, 120]
+urgency = st.sidebar.selectbox(
+    "Urgency Level",
+    ["low", "medium", "high"]
 )
 
 # ----------------------------
-# RUN SIMULATION
+# TRAIN FUNCTION (TEMPORARY WORKLOAD)
+# Replace later with your LSTM training
 # ----------------------------
-if st.button("🚀 Run Simulation"):
+def train_function():
+    import numpy as np
 
+    x = np.random.rand(2000, 2000)
+
+    for _ in range(10):
+        x = x @ x
+
+
+# ----------------------------
+# RUN EXPERIMENT BUTTON
+# ----------------------------
+if st.button("🚀 Run Full Experiment"):
+
+    # ----------------------------
+    # LOAD CARBON DATA
+    # ----------------------------
     api = CarbonAPI()
     df = api.get_24h_forecast()
+
     df["carbon"] = df["actual"].fillna(df["forecast"])
-
-    scheduler = CarbonScheduler(df)
-    sim = MLTrainingSimulator()
-
-    results = []
-
-    for d in durations:
-        best, worst, _ = scheduler.find_optimal_window(
-            duration_minutes=d,
-            urgency=urgency
-        )
-
-        runtime = sim.simulate_training(duration_minutes=1)
-
-        # scale energy realistically
-        scaled_runtime_hours = max(runtime / 3600, 0.05)
-        energy = 0.25 * scaled_runtime_hours
-
-        best_emissions = sim.calculate_emissions(energy, best["avg_carbon"])
-        worst_emissions = sim.calculate_emissions(energy, worst["avg_carbon"])
-
-        savings = ((worst_emissions - best_emissions) / worst_emissions) * 100
-
-        results.append({
-            "duration": d,
-            "best_emissions": best_emissions,
-            "worst_emissions": worst_emissions,
-            "savings": savings
-        })
-
-    results_df = pd.DataFrame(results)
+    carbon_values = df["carbon"].values
 
     # ----------------------------
-    # KPI SUMMARY
+    # RUN EXPERIMENT PIPELINE
     # ----------------------------
-    st.markdown("## 📊 Simulation Summary")
+    results = run_experiment(carbon_values, train_function)
 
-    col1, col2, col3 = st.columns(3)
-
-    col1.metric("🧪 Runs", runs)
-    col2.metric("📏 Max Savings", f"{results_df['savings'].max():.2f}%")
-    col3.metric("⚡ Avg Savings", f"{results_df['savings'].mean():.2f}%")
+    # Convert results to dataframe
+    results_df = pd.DataFrame([results])
 
     # ----------------------------
-    # MAIN GRAPH
+    # SHOW RESULTS
     # ----------------------------
-    st.markdown("## 📈 Carbon Impact vs Training Duration")
+    st.markdown("## 📊 Experiment Results")
+
+    st.dataframe(results_df, use_container_width=True)
+
+    # ----------------------------
+    # SIMPLE VISUAL COMPARISON
+    # ----------------------------
+    st.markdown("## 📈 Emissions Comparison")
 
     fig = go.Figure()
 
-    fig.add_trace(go.Scatter(
-        x=results_df["duration"],
-        y=results_df["best_emissions"],
-        mode="lines+markers",
-        name="Optimized Emissions",
-        line=dict(color="green", width=3)
+    fig.add_trace(go.Bar(
+        name="Baseline",
+        x=["Baseline"],
+        y=[results["baseline"]]
     ))
 
-    fig.add_trace(go.Scatter(
-        x=results_df["duration"],
-        y=results_df["worst_emissions"],
-        mode="lines+markers",
-        name="Immediate Emissions",
-        line=dict(color="red", width=3)
+    fig.add_trace(go.Bar(
+        name="Heuristic",
+        x=["Heuristic"],
+        y=[results["heuristic"]]
+    ))
+
+    fig.add_trace(go.Bar(
+        name="RL",
+        x=["RL"],
+        y=[results["rl"]]
     ))
 
     fig.update_layout(
-        height=500,
-        template="plotly_white",
-        xaxis_title="Training Duration (minutes)",
-        yaxis_title="Carbon Emissions (gCO₂)",
-        hovermode="x unified"
+        barmode="group",
+        title="Carbon Emissions Comparison",
+        yaxis_title="CO₂ Emissions (kg)",
+        template="plotly_white"
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
     # ----------------------------
-    # TABLE VIEW
+    # KEY INSIGHT
     # ----------------------------
-    st.markdown("## 📋 Detailed Results")
-
-    st.dataframe(results_df, use_container_width=True)
-
-    # ----------------------------
-    # INSIGHT SECTION
-    # ----------------------------
-    st.markdown("## 🧠 Insight")
-
-    best_row = results_df.loc[results_df["savings"].idxmax()]
+    best_method = min(results, key=results.get)
 
     st.success(
         f"""
-        Optimal scheduling consistently reduces emissions across workloads.
+        🏆 Best Performing Method: **{best_method.upper()}**
 
-        Best configuration:
-        - Duration: {best_row['duration']} minutes
-        - Savings: {best_row['savings']:.2f}%
+        This experiment demonstrates measurable differences between:
+        - Baseline (no scheduling)
+        - Heuristic scheduling
+        - RL-based scheduling
 
-        This demonstrates that carbon-aware scheduling benefits scale across different ML workload sizes.
+        These results form the core empirical contribution of your paper.
         """
     )
-
-        # ----------------------------
-    # 🤖 RL vs HEURISTIC COMPARISON (NEW SECTION)
-    # ----------------------------
-
-    st.markdown("## 🤖 RL vs Heuristic Comparison")
-
-    # Use same carbon data already fetched
-    carbon_values = df["carbon"].values
-
-    # RL simulation
-    rl_emissions = simulate_rl(carbon_values)
-
-    # Baseline (simple heuristic: immediate execution)
-    baseline_emissions = sum(carbon_values[:len(carbon_values)-1])
-
-    col1, col2 = st.columns(2)
-
-    col1.metric("⚙️ Heuristic (Immediate Run)", f"{baseline_emissions:.2f}")
-    col2.metric("🤖 RL Agent", f"{rl_emissions:.2f}")
-
-    # Improvement %
-    improvement = ((baseline_emissions - rl_emissions) / baseline_emissions) * 100
-
-    st.success(f"RL-based scheduling improves emissions by {improvement:.2f}% compared to naive execution.")
