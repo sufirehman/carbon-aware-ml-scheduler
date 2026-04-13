@@ -1,9 +1,10 @@
 # 🌍 Carbon-Aware ML Training Controller
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
-![RL](https://img.shields.io/badge/Reinforcement-Learning-brightgreen)
-![Green AI](https://img.shields.io/badge/Green-AI-sustainable-success)
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit)
+![ML](https://img.shields.io/badge/Machine%20Learning-Optimized-orange)
+![Green AI](https://img.shields.io/badge/AI-Carbon%20Aware-success)
+![Status](https://img.shields.io/badge/Status-Research%20Prototype-brightgreen)
 
 ## ⚡ Executive Summary
 
@@ -174,4 +175,4 @@ Building intelligent, carbon-aware AI systems for sustainable machine learning i
 
 ## 📌 Closing Statement
 
-This system demonstrates that the future of machine learning infrastructure is not only about performance and accuracy — but also about **when and how sustainably computation is executed**.
+This system demonstrates that the future of machine learning infrastructure is not only about performance and accuracy, but also about **when and how sustainably computation is executed**.
