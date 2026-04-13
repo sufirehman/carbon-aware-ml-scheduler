@@ -17,14 +17,17 @@ st.set_page_config(
     layout="wide"
 )
 
+# ----------------------------
+# HEADER (UPGRADED)
+# ----------------------------
 st.markdown("""
-<div style="text-align:center;">
-<h1 style="font-size:48px; background:linear-gradient(90deg,#00C9FF,#92FE9D);
+<div style="text-align:center; padding-bottom:10px;">
+<h1 style="font-size:52px; background:linear-gradient(90deg,#00C9FF,#92FE9D);
 -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
 📡 Carbon Intelligence Forecast System
 </h1>
 <p style="color:#94a3b8; font-size:18px;">
-Real-time UK grid carbon prediction for intelligent ML scheduling
+AI-powered grid carbon forecasting for ML workload scheduling optimization
 </p>
 </div>
 """, unsafe_allow_html=True)
@@ -43,17 +46,21 @@ df["from"] = pd.to_datetime(df["from"])
 # ----------------------------
 peak = df["carbon"].max()
 low = df["carbon"].min()
-
-peak_time = df[df["carbon"] == peak]["from"].iloc[0]
-low_time = df[df["carbon"] == low]["from"].iloc[0]
-
 avg = df["carbon"].mean()
 volatility = df["carbon"].std()
 
-best_window = df.nsmallest(3, "carbon")[["from", "carbon"]]
+peak_time = df.loc[df["carbon"].idxmax(), "from"]
+low_time = df.loc[df["carbon"].idxmin(), "from"]
+
+# best and worst windows (more stable than nsmallest)
+best_window = df.nsmallest(3, "carbon").sort_values("from")
+worst_window = df.nlargest(3, "carbon").sort_values("from")
+
+best_start, best_end = best_window["from"].iloc[0], best_window["from"].iloc[-1]
+worst_start, worst_end = worst_window["from"].iloc[0], worst_window["from"].iloc[-1]
 
 # ----------------------------
-# KPI DASHBOARD
+# KPI DASHBOARD (UPGRADED)
 # ----------------------------
 st.markdown("## 📊 Grid Intelligence Overview")
 
@@ -61,45 +68,43 @@ c1, c2, c3, c4 = st.columns(4)
 
 c1.metric("🔥 Peak Carbon", f"{peak:.2f} gCO₂/kWh")
 c2.metric("🌱 Lowest Carbon", f"{low:.2f} gCO₂/kWh")
-c3.metric("📊 Average", f"{avg:.2f} gCO₂/kWh")
+c3.metric("📊 Avg Carbon", f"{avg:.2f} gCO₂/kWh")
 c4.metric("📉 Volatility", f"{volatility:.2f}")
 
 # ----------------------------
-# RECOMMENDATION BOX (VERY IMPORTANT)
+# DECISION PANEL (KEY UPGRADE)
 # ----------------------------
-st.markdown("## 🧠 AI Scheduling Recommendation")
-
-best_start = best_window.iloc[0]["from"]
+st.markdown("## 🧠 Scheduling Intelligence Output")
 
 st.success(f"""
-✔ Optimal Training Window Detected
+✔ **Recommended Action: Schedule ML Training in Low-Carbon Window**
 
-Start Time: **{best_start.strftime('%H:%M')}**
+🟢 Best Start: {best_start.strftime('%H:%M')}  
+🔴 Avoid High Carbon Window: {worst_start.strftime('%H:%M')}
 
-Reason:
-- Lowest carbon cluster detected
-- Stable grid conditions
-- Ideal for ML workload execution
-
-Expected CO₂ savings: **High (compared to peak window execution)**
+Expected outcome:
+- Reduced CO₂ emissions
+- Improved carbon efficiency
+- Optimal use of grid conditions
 """)
 
 # ----------------------------
-# MAIN GRAPH
+# MAIN GRAPH (CONTROL SYSTEM STYLE)
 # ----------------------------
-st.markdown("## 📈 24-Hour Carbon Intelligence Curve")
+st.markdown("## 📈 Carbon Intensity Control View (24h)")
 
 fig = go.Figure()
 
+# main signal
 fig.add_trace(go.Scatter(
     x=df["from"],
     y=df["carbon"],
     mode="lines",
-    name="Carbon Intensity",
-    line=dict(width=3, color="#111827")
+    name="Grid Carbon Intensity",
+    line=dict(width=3, color="#0f172a")
 ))
 
-# Highlight peak
+# peak
 fig.add_trace(go.Scatter(
     x=[peak_time],
     y=[peak],
@@ -110,7 +115,7 @@ fig.add_trace(go.Scatter(
     name="Peak"
 ))
 
-# Highlight low
+# low
 fig.add_trace(go.Scatter(
     x=[low_time],
     y=[low],
@@ -121,17 +126,30 @@ fig.add_trace(go.Scatter(
     name="Low"
 ))
 
-# Highlight BEST WINDOW (visual band feel)
+# BEST WINDOW (green band)
 fig.add_vrect(
-    x0=best_window.iloc[0]["from"],
-    x1=best_window.iloc[1]["from"],
+    x0=best_start,
+    x1=best_end,
     fillcolor="green",
-    opacity=0.1,
-    line_width=0
+    opacity=0.15,
+    line_width=0,
+    annotation_text="Optimal Execution Window",
+    annotation_position="top left"
+)
+
+# WORST WINDOW (red band)
+fig.add_vrect(
+    x0=worst_start,
+    x1=worst_end,
+    fillcolor="red",
+    opacity=0.10,
+    line_width=0,
+    annotation_text="High Carbon Window",
+    annotation_position="bottom left"
 )
 
 fig.update_layout(
-    height=600,
+    height=620,
     template="plotly_white",
     hovermode="x unified",
     xaxis_title="Time",
@@ -142,23 +160,17 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------
-# INSIGHT ENGINE
+# FINAL INSIGHT (NO EXPANDER NEEDED)
 # ----------------------------
 st.markdown("## 🧠 System Insight")
 
 st.info(f"""
-The UK grid shows strong temporal carbon variability.
+The UK grid exhibits strong temporal carbon variability.
 
-Key observations:
+Key findings:
 - Peak emissions are {((peak - low) / low * 100):.1f}% higher than minimum
-- Grid volatility indicates strong opportunity for scheduling optimization
-- ML workloads can be shifted to low-carbon windows for significant reduction
+- Significant scheduling opportunity exists within low-carbon clusters
+- This directly enables RL-based carbon-aware ML training optimization
 
-This forecast directly feeds into the RL scheduling engine.
+This forecast module acts as the **input intelligence layer** for the scheduling engine.
 """)
-
-# ----------------------------
-# RAW DATA
-# ----------------------------
-with st.expander("📋 View Raw Forecast Data"):
-    st.dataframe(df[["from", "carbon"]], use_container_width=True)
