@@ -151,10 +151,10 @@ with col4:
 # KPI RENDER
 # -----------------
 col1, col2, col3, col4 = st.columns(4)
-with col1: kpi_card("Peak Intensity", peak, "glow-red")
-with col2: kpi_card("Daily Minimum", low, "glow-green")
-with col3: kpi_card("Grid Average", avg, "glow-blue")
-with col4: kpi_card("Volatility", volatility, "glow-amber")
+with col1: kpi("Peak Intensity", peak, "glow-red")
+with col2: kpi("Daily Minimum", low, "glow-green")
+with col3: kpi("Grid Average", avg, "glow-blue")
+with col4: kpi("Volatility", volatility, "glow-amber")
     
 # ----------------------------
 # GRAPH (BEST + WORST WINDOWS RESTORED)
