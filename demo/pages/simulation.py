@@ -51,17 +51,35 @@ def train_function():
 # ----------------------------
 if st.button("🚀 Run Full Experiment"):
 
-    # Load carbon data
+    progress = st.progress(0)
+    status = st.empty()
+
+    # ----------------------------
+    # STEP 1: LOAD DATA
+    # ----------------------------
+    status.info("📡 Loading carbon forecast data...")
+    progress.progress(10)
+
     api = CarbonAPI()
     df = api.get_24h_forecast()
     df["carbon"] = df["actual"].fillna(df["forecast"])
 
-    # Run experiment
-    results = run_experiment(df, train_function, runs=3)
+    # ----------------------------
+    # STEP 2: RUN EXPERIMENT
+    # ----------------------------
+    status.info("🧪 Running carbon-aware experiment (baseline vs heuristic vs RL)...")
+    progress.progress(30)
+
+    with st.spinner("Running experiments... please wait ⏳"):
+        results = run_experiment(df, train_function, runs=3)
+
+    progress.progress(70)
 
     # ----------------------------
-    # CONVERT TO DATAFRAME
+    # STEP 3: PROCESS RESULTS
     # ----------------------------
+    status.info("📊 Processing results and generating insights...")
+    
     results_df = pd.DataFrame([{
         "Baseline (kg CO2)": results["baseline"],
         "Heuristic (kg CO2)": results["heuristic"],
@@ -72,6 +90,14 @@ if st.button("🚀 Run Full Experiment"):
         "RL (g CO2)": results["rl"] * 1000,
     }])
 
+    progress.progress(90)
+
+    # ----------------------------
+    # DONE
+    # ----------------------------
+    progress.progress(100)
+    status.success("✅ Experiment completed successfully!")
+
     # ----------------------------
     # RESULTS TABLE
     # ----------------------------
@@ -79,7 +105,7 @@ if st.button("🚀 Run Full Experiment"):
     st.dataframe(results_df, use_container_width=True)
 
     # ----------------------------
-    # BAR CHART
+    # CHART
     # ----------------------------
     st.markdown("## 📈 Emissions Comparison")
 
@@ -117,13 +143,12 @@ if st.button("🚀 Run Full Experiment"):
     # ----------------------------
     best_method = min(results, key=results.get)
 
-    st.success(
-        f"""
-🏆 Best Performing Method: {best_method.upper()}
+    st.success(f"""
+🏆 **Best Performing Method: {best_method.upper()}**
 
-This experiment demonstrates measurable carbon differences between:
-- Baseline (no scheduling)
-- Heuristic scheduling
-- RL-based scheduling
-"""
-    )
+This demonstrates measurable carbon savings using intelligent scheduling.
+
+✔ Baseline = no optimization  
+✔ Heuristic = rule-based scheduling  
+✔ RL = adaptive learning-based scheduling  
+""")
