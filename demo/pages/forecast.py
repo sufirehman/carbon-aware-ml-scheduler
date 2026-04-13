@@ -162,22 +162,26 @@ fig.add_trace(go.Scatter(
     line=dict(width=3, color="#111827")
 ))
 
-# 🟢 BEST WINDOW (CLEAR GREEN)
+# 🟢 BEST WINDOW (LOW CARBON ZONE)
 fig.add_vrect(
     x0=best_window.iloc[0]["from"],
     x1=best_window.iloc[-1]["from"],
-    fillcolor="rgba(16, 185, 129, 0.25)",  # emerald
+    fillcolor="green",
+    opacity=0.10,
     line_width=0,
-    layer="below"
+    annotation_text="Low Carbon Window",
+    annotation_position="top left"
 )
 
-# 🔴 WORST WINDOW (CLEAR RED)
+# 🔴 WORST WINDOW (HIGH CARBON ZONE)
 fig.add_vrect(
     x0=worst_window.iloc[0]["from"],
     x1=worst_window.iloc[-1]["from"],
-    fillcolor="rgba(239, 68, 68, 0.25)",  # strong red
+    fillcolor="red",
+    opacity=0.10,
     line_width=0,
-    layer="below"
+    annotation_text="High Carbon Window",
+    annotation_position="top left"
 )
 
 # 🔴 Peak point
