@@ -56,72 +56,31 @@ best_window = df.nsmallest(3, "carbon")
 worst_window = df.nlargest(3, "carbon")
 
 # ----------------------------
-# KPI SECTION (STREAMLIT SAFE - NO HTML)
+# KPI SECTION (CLEAN + RELIABLE STREAMLIT CARDS)
 # ----------------------------
 st.markdown("## 📊 Grid Intelligence Overview")
 
 c1, c2, c3, c4 = st.columns(4)
 
-c1.markdown(f"""
-<div style="
-    background: rgba(255,255,255,0.06);
-    padding: 18px;
-    border-radius: 16px;
-    text-align:center;
-    border: 1px solid rgba(255,255,255,0.1);
-">
-    <div style="color:#94a3b8; font-size:14px;">🔥 Peak Carbon</div>
-    <div style="font-size:28px; font-weight:700; color:white;">
-        {peak:.2f}
-    </div>
-</div>
-""", unsafe_allow_html=True)
+with c1:
+    with st.container(border=True):
+        st.markdown("🔥 **Peak Carbon**")
+        st.markdown(f"### {peak:.2f}")
 
-c2.markdown(f"""
-<div style="
-    background: rgba(255,255,255,0.06);
-    padding: 18px;
-    border-radius: 16px;
-    text-align:center;
-    border: 1px solid rgba(255,255,255,0.1);
-">
-    <div style="color:#94a3b8; font-size:14px;">🌱 Lowest Carbon</div>
-    <div style="font-size:28px; font-weight:700; color:white;">
-        {low:.2f}
-    </div>
-</div>
-""", unsafe_allow_html=True)
+with c2:
+    with st.container(border=True):
+        st.markdown("🌱 **Lowest Carbon**")
+        st.markdown(f"### {low:.2f}")
 
-c3.markdown(f"""
-<div style="
-    background: rgba(255,255,255,0.06);
-    padding: 18px;
-    border-radius: 16px;
-    text-align:center;
-    border: 1px solid rgba(255,255,255,0.1);
-">
-    <div style="color:#94a3b8; font-size:14px;">📊 Average</div>
-    <div style="font-size:28px; font-weight:700; color:white;">
-        {avg:.2f}
-    </div>
-</div>
-""", unsafe_allow_html=True)
+with c3:
+    with st.container(border=True):
+        st.markdown("📊 **Average**")
+        st.markdown(f"### {avg:.2f}")
 
-c4.markdown(f"""
-<div style="
-    background: rgba(255,255,255,0.06);
-    padding: 18px;
-    border-radius: 16px;
-    text-align:center;
-    border: 1px solid rgba(255,255,255,0.1);
-">
-    <div style="color:#94a3b8; font-size:14px;">📉 Volatility</div>
-    <div style="font-size:28px; font-weight:700; color:white;">
-        {volatility:.2f}
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
+with c4:
+    with st.container(border=True):
+        st.markdown("📉 **Volatility**")
+        st.markdown(f"### {volatility:.2f}")
 # ----------------------------
 # GRAPH (BEST + WORST WINDOWS RESTORED)
 # ----------------------------
