@@ -55,6 +55,10 @@ low_time = df.loc[df["carbon"].idxmin(), "from"]
 best_window = df.nsmallest(3, "carbon")
 worst_window = df.nlargest(3, "carbon")
 
+# -----------------
+# KPI SECTION 
+#  ----------------
+
 st.markdown("## 📊 Grid Intelligence Overview")
 
 def kpi_card(title, value, color):
