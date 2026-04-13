@@ -57,7 +57,7 @@ if st.button("🚀 Run Full Experiment"):
     df["carbon"] = df["actual"].fillna(df["forecast"])
 
     # Run experiment
-    results = run_experiment(df, train_function, runs=10)
+    results = run_experiment(df, train_function, runs=3)
 
     # ----------------------------
     # CONVERT TO DATAFRAME

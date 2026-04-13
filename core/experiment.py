@@ -71,7 +71,7 @@ def run_with_rl(df, train_function):
 # -------------------------------
 # 4. MAIN EXPERIMENT
 # -------------------------------
-def run_experiment(df, train_function, runs=10):
+def run_experiment(df, train_function, runs=3):
 
     baseline_list = []
     heuristic_list = []
