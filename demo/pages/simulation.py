@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 from core.carbon_api import CarbonAPI
 from core.experiment import run_experiment
 
+
 # ----------------------------
 # PAGE CONFIG
 # ----------------------------
@@ -21,60 +22,42 @@ st.set_page_config(
 st.title("⚙️ Carbon Simulation Lab")
 st.markdown("Run baseline, heuristic, and RL experiments with real emissions measurement.")
 
-# ----------------------------
-# SIDEBAR SETTINGS
-# ----------------------------
-st.sidebar.header("🧪 Experiment Settings")
-
-urgency = st.sidebar.selectbox(
-    "Urgency Level",
-    ["low", "medium", "high"]
-)
 
 # ----------------------------
-# TRAIN FUNCTION (TEMPORARY WORKLOAD)
-# Replace later with your LSTM training
+# TRAIN FUNCTION (TEMP WORKLOAD)
 # ----------------------------
 def train_function():
     import numpy as np
 
-    x = np.random.rand(2000, 2000)
+    x = np.random.rand(200, 200)
 
-    for _ in range(10):
+    for _ in range(5):
         x = x @ x
 
 
 # ----------------------------
-# RUN EXPERIMENT BUTTON
+# RUN EXPERIMENT
 # ----------------------------
 if st.button("🚀 Run Full Experiment"):
 
-    # ----------------------------
-    # LOAD CARBON DATA
-    # ----------------------------
     api = CarbonAPI()
     df = api.get_24h_forecast()
 
     df["carbon"] = df["actual"].fillna(df["forecast"])
-    carbon_values = df["carbon"].values
 
-    # ----------------------------
-    # RUN EXPERIMENT PIPELINE
-    # ----------------------------
-    results = run_experiment(carbon_values, train_function)
+    # IMPORTANT: pass FULL dataframe
+    results = run_experiment(df, train_function)
 
-    # Convert results to dataframe
     results_df = pd.DataFrame([results])
 
     # ----------------------------
-    # SHOW RESULTS
+    # RESULTS TABLE
     # ----------------------------
     st.markdown("## 📊 Experiment Results")
-
     st.dataframe(results_df, use_container_width=True)
 
     # ----------------------------
-    # SIMPLE VISUAL COMPARISON
+    # BAR CHART
     # ----------------------------
     st.markdown("## 📈 Emissions Comparison")
 
@@ -108,19 +91,17 @@ if st.button("🚀 Run Full Experiment"):
     st.plotly_chart(fig, use_container_width=True)
 
     # ----------------------------
-    # KEY INSIGHT
+    # INSIGHT
     # ----------------------------
     best_method = min(results, key=results.get)
 
     st.success(
         f"""
-        🏆 Best Performing Method: **{best_method.upper()}**
+🏆 Best Performing Method: {best_method.upper()}
 
-        This experiment demonstrates measurable differences between:
-        - Baseline (no scheduling)
-        - Heuristic scheduling
-        - RL-based scheduling
-
-        These results form the core empirical contribution of your paper.
-        """
+This experiment demonstrates measurable carbon differences between:
+- Baseline (no scheduling)
+- Heuristic scheduling
+- RL-based scheduling
+"""
     )

@@ -4,43 +4,36 @@ import numpy as np
 
 class CarbonScheduler:
     def __init__(self, forecast_df):
-        """
-        forecast_df: DataFrame with columns:
-        ['from', 'to', 'forecast', 'actual']
-        """
+
         self.df = forecast_df.copy()
 
-        # Use forecast if actual is missing
+        # ✅ FIX: ensure datetime
+        self.df["from"] = pd.to_datetime(self.df["from"])
+        self.df["to"] = pd.to_datetime(self.df["to"])
+
         self.df["carbon"] = self.df["actual"].fillna(self.df["forecast"])
 
-        # Confidence weighting (future = less reliable)
         self.df["hours_ahead"] = (
             self.df["from"] - pd.Timestamp.utcnow()
         ).dt.total_seconds() / 3600
 
-        # Confidence decay (exponential)
         self.df["confidence"] = np.exp(-0.05 * self.df["hours_ahead"])
 
     def find_optimal_window(self, duration_minutes=60, urgency="medium"):
-        """
-        duration_minutes: training job duration
-        urgency: low / medium / high
-        """
 
-        window_size = int(duration_minutes / 30)  # API is 30-min intervals
+        # ✅ FIX: prevent zero window
+        window_size = max(1, int(duration_minutes / 30))
 
         results = []
 
         for i in range(len(self.df) - window_size):
             window = self.df.iloc[i:i + window_size]
 
-            # Weighted carbon score
             weighted_carbon = np.average(
                 window["carbon"],
                 weights=window["confidence"]
             )
 
-            # Delay penalty
             delay_hours = window["hours_ahead"].iloc[0]
             penalty = self._urgency_penalty(delay_hours, urgency)
 
@@ -56,21 +49,22 @@ class CarbonScheduler:
 
         results_df = pd.DataFrame(results)
 
+        # ✅ FIX: handle empty case
+        if len(results_df) == 0:
+            raise ValueError("No valid scheduling windows found.")
+
         best = results_df.loc[results_df["score"].idxmin()]
         worst = results_df.loc[results_df["score"].idxmax()]
 
         return best, worst, results_df
 
     def _urgency_penalty(self, delay_hours, urgency):
-        """
-        Penalizes waiting too long
-        """
 
         if urgency == "low":
             factor = 0.1
         elif urgency == "medium":
             factor = 0.5
-        else:  # high
+        else:
             factor = 1.5
 
         return factor * delay_hours
