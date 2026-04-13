@@ -53,21 +53,73 @@ peak_time = df.loc[df["carbon"].idxmax(), "from"]
 low_time = df.loc[df["carbon"].idxmin(), "from"]
 
 best_window = df.nsmallest(3, "carbon")
+worst_window = df.nlargest(3, "carbon")
 
 # ----------------------------
-# KPI SECTION
+# KPI SECTION (UPGRADED STYLE)
 # ----------------------------
 st.markdown("## 📊 Grid Intelligence Overview")
 
-c1, c2, c3, c4 = st.columns(4)
+st.markdown("""
+<style>
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 10px;
+}
 
-c1.metric("🔥 Peak Carbon", f"{peak:.2f}")
-c2.metric("🌱 Lowest Carbon", f"{low:.2f}")
-c3.metric("📊 Average", f"{avg:.2f}")
-c4.metric("📉 Volatility", f"{volatility:.2f}")
+.metric-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 18px;
+    border-radius: 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.metric-title {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.metric-value {
+    font-size: 26px;
+    font-weight: bold;
+    color: white;
+    margin-top: 6px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<div class="card-container">
+
+    <div class="metric-card">
+        <div class="metric-title">🔥 Peak Carbon</div>
+        <div class="metric-value">{peak:.2f}</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-title">🌱 Lowest Carbon</div>
+        <div class="metric-value">{low:.2f}</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-title">📊 Average</div>
+        <div class="metric-value">{avg:.2f}</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-title">📉 Volatility</div>
+        <div class="metric-value">{volatility:.2f}</div>
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # ----------------------------
-# INSIGHT BOX
+# AI INSIGHT
 # ----------------------------
 st.markdown("## 🧠 AI Scheduling Recommendation")
 
@@ -77,20 +129,21 @@ st.success(f"""
 Start Time: **{best_window.iloc[0]['from'].strftime('%H:%M')}**
 
 Why this window:
-- Lowest carbon cluster
+- Lowest carbon cluster detected
 - Stable grid conditions
-- Best for ML workload execution
+- Ideal for ML training execution
 
-Expected CO₂ savings vs peak: **High**
+Expected CO₂ savings vs peak: **Significant**
 """)
 
 # ----------------------------
-# GRAPH
+# GRAPH (BEST + WORST WINDOWS RESTORED)
 # ----------------------------
 st.markdown("## 📈 24-Hour Carbon Intelligence Curve")
 
 fig = go.Figure()
 
+# Main line
 fig.add_trace(go.Scatter(
     x=df["from"],
     y=df["carbon"],
@@ -99,47 +152,63 @@ fig.add_trace(go.Scatter(
     line=dict(width=3, color="#111827")
 ))
 
-# Peak marker (RED)
+# 🟢 BEST WINDOW (LOW CARBON ZONE)
+fig.add_vrect(
+    x0=best_window.iloc[0]["from"],
+    x1=best_window.iloc[-1]["from"],
+    fillcolor="green",
+    opacity=0.10,
+    line_width=0,
+    annotation_text="Low Carbon Window",
+    annotation_position="top left"
+)
+
+# 🔴 WORST WINDOW (HIGH CARBON ZONE)
+fig.add_vrect(
+    x0=worst_window.iloc[0]["from"],
+    x1=worst_window.iloc[-1]["from"],
+    fillcolor="red",
+    opacity=0.10,
+    line_width=0,
+    annotation_text="High Carbon Window",
+    annotation_position="top left"
+)
+
+# 🔴 Peak point
 fig.add_trace(go.Scatter(
     x=[peak_time],
     y=[peak],
     mode="markers+text",
     marker=dict(size=12, color="red"),
     text=["Peak"],
-    textposition="top center"
+    textposition="top center",
+    name="Peak"
 ))
 
-# Low marker (GREEN)
+# 🟢 Low point
 fig.add_trace(go.Scatter(
     x=[low_time],
     y=[low],
     mode="markers+text",
     marker=dict(size=12, color="green"),
     text=["Low"],
-    textposition="bottom center"
+    textposition="bottom center",
+    name="Low"
 ))
-
-# Best window highlight
-fig.add_vrect(
-    x0=best_window.iloc[0]["from"],
-    x1=best_window.iloc[2]["from"],
-    fillcolor="green",
-    opacity=0.08,
-    line_width=0
-)
 
 fig.update_layout(
     height=600,
     template="plotly_white",
     hovermode="x unified",
     xaxis_title="Time",
-    yaxis_title="Carbon Intensity (gCO₂/kWh)"
+    yaxis_title="Carbon Intensity (gCO₂/kWh)",
+    legend=dict(orientation="h")
 )
 
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------
-# DATA SECTION (NO BUTTON)
+# DATA SECTION (NO BUTTONS)
 # ----------------------------
 st.markdown("## 📂 Forecast Intelligence Panel")
 
@@ -150,7 +219,6 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 with tab1:
-    st.write("Key statistics from UK grid forecast.")
     st.json({
         "peak": float(peak),
         "low": float(low),
@@ -163,10 +231,10 @@ with tab2:
 
 with tab3:
     st.info("""
-The UK grid shows strong temporal variation in carbon intensity.
+The UK grid shows strong temporal carbon variation.
 
-This enables:
+This directly enables:
 - Carbon-aware ML scheduling
-- RL-based workload optimization
-- Dynamic delay strategies for training jobs
+- RL-based decision systems
+- Dynamic workload shifting
 """)
