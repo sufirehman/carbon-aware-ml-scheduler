@@ -90,29 +90,27 @@ st.markdown("""
     margin-top: 6px;
 }
 </style>
-""", unsafe_allow_html=True)
 
-st.markdown(f"""
 <div class="card-container">
 
     <div class="metric-card">
         <div class="metric-title">🔥 Peak Carbon</div>
-        <div class="metric-value">{peak:.2f}</div>
+        <div class="metric-value">""" + f"{peak:.2f}" + """</div>
     </div>
 
     <div class="metric-card">
         <div class="metric-title">🌱 Lowest Carbon</div>
-        <div class="metric-value">{low:.2f}</div>
+        <div class="metric-value">""" + f"{low:.2f}" + """</div>
     </div>
 
     <div class="metric-card">
         <div class="metric-title">📊 Average</div>
-        <div class="metric-value">{avg:.2f}</div>
+        <div class="metric-value">""" + f"{avg:.2f}" + """</div>
     </div>
 
     <div class="metric-card">
         <div class="metric-title">📉 Volatility</div>
-        <div class="metric-value">{volatility:.2f}</div>
+        <div class="metric-value">""" + f"{volatility:.2f}" + """</div>
     </div>
 
 </div>
