@@ -55,32 +55,92 @@ low_time = df.loc[df["carbon"].idxmin(), "from"]
 best_window = df.nsmallest(3, "carbon")
 worst_window = df.nlargest(3, "carbon")
 
-# ----------------------------
-# KPI SECTION (CLEAN + RELIABLE STREAMLIT CARDS)
-# ----------------------------
 st.markdown("## 📊 Grid Intelligence Overview")
 
-c1, c2, c3, c4 = st.columns(4)
+st.markdown(f"""
+<style>
 
-with c1:
-    with st.container(border=True):
-        st.markdown("🔥 **Peak Carbon**")
-        st.markdown(f"### {peak:.2f}")
+.kpi-grid {{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+}}
 
-with c2:
-    with st.container(border=True):
-        st.markdown("🌱 **Lowest Carbon**")
-        st.markdown(f"### {low:.2f}")
+.kpi-card {{
+    padding: 20px;
+    border-radius: 18px;
+    text-align: center;
+    font-family: sans-serif;
+    transition: 0.25s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}}
 
-with c3:
-    with st.container(border=True):
-        st.markdown("📊 **Average**")
-        st.markdown(f"### {avg:.2f}")
+.kpi-card:hover {{
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}}
 
-with c4:
-    with st.container(border=True):
-        st.markdown("📉 **Volatility**")
-        st.markdown(f"### {volatility:.2f}")
+.kpi-title {{
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+}}
+
+.kpi-value {{
+    font-size: 30px;
+    font-weight: 800;
+}}
+
+.red {{
+    background: linear-gradient(135deg, rgba(255,0,80,0.15), rgba(255,0,80,0.05));
+    color: #ff4d6d;
+}}
+
+.green {{
+    background: linear-gradient(135deg, rgba(0,255,150,0.15), rgba(0,255,150,0.05));
+    color: #2ef2a5;
+}}
+
+.cyan {{
+    background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(0,200,255,0.05));
+    color: #38bdf8;
+}}
+
+.purple {{
+    background: linear-gradient(135deg, rgba(180,0,255,0.15), rgba(180,0,255,0.05));
+    color: #c084fc;
+}}
+
+</style>
+
+<div class="kpi-grid">
+
+    <div class="kpi-card red">
+        <div class="kpi-title">🔥 Peak Carbon</div>
+        <div class="kpi-value">{peak:.2f}</div>
+    </div>
+
+    <div class="kpi-card green">
+        <div class="kpi-title">🌱 Lowest Carbon</div>
+        <div class="kpi-value">{low:.2f}</div>
+    </div>
+
+    <div class="kpi-card cyan">
+        <div class="kpi-title">📊 Average</div>
+        <div class="kpi-value">{avg:.2f}</div>
+    </div>
+
+    <div class="kpi-card purple">
+        <div class="kpi-title">📉 Volatility</div>
+        <div class="kpi-value">{volatility:.2f}</div>
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
 # ----------------------------
 # GRAPH (BEST + WORST WINDOWS RESTORED)
 # ----------------------------
