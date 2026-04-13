@@ -1,8 +1,18 @@
 # 🌍 Carbon-Aware ML Training Controller
 
-A real-time carbon-aware machine learning scheduling system that optimizes training workloads based on UK grid carbon intensity using forecasting, heuristic optimization, and reinforcement learning.
+A reinforcement learning–enhanced carbon intelligence system that dynamically schedules machine learning workloads based on real-time and forecasted UK electricity grid carbon intensity.
+
+The system combines **carbon forecasting, optimization heuristics, and adaptive reinforcement learning** to intelligently shift compute workloads into low-emission periods — reducing the environmental impact of large-scale AI training.
 
 ---
+
+## ⚡ Why This Matters
+
+Machine learning workloads are typically executed without regard to grid emissions, leading to unnecessary CO₂ output.
+
+This system introduces a **carbon-aware compute paradigm**, where training execution timing becomes an optimization problem driven by real-world electricity grid carbon intensity signals.
+
+> 💡 Result: Lower emissions without reducing computational output or model performance.
 
 ## 🚀 Overview
 
