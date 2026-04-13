@@ -8,8 +8,12 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from core.carbon_api import CarbonAPI
-from core.experiment import run_experiment
+import sys
+import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+from core.experiment import run_experiment
 
 # ----------------------------
 # PAGE CONFIG
