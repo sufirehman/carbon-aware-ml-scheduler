@@ -59,45 +59,41 @@ worst_window = df.nlargest(3, "carbon")
 # KPI SECTION 
 #  ----------------
 
+# -----------------
+# KPI SECTION (FINAL PROFESSIONAL VERSION)
+# -----------------
+
 st.markdown("## 📊 Grid Intelligence Overview")
 
 st.markdown("""
 <style>
 
-.kpi-wrap {
+.kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 18px;
     margin-top: 10px;
 }
 
-.kpi {
-    background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
+.kpi-card {
+    background: linear-gradient(180deg, #0a0f1c 0%, #070b14 100%);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 16px;
-    padding: 18px;
+    padding: 20px;
     position: relative;
     overflow: hidden;
-    transition: 0.25s ease;
+    transition: all 0.25s ease;
 }
 
-.kpi:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255,255,255,0.15);
-}
-
-.kpi::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 3px;
-    width: 100%;
+.kpi-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,255,255,0.18);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
 
 .kpi-title {
     font-size: 12px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #94a3b8;
     margin-bottom: 10px;
@@ -110,23 +106,26 @@ st.markdown("""
     color: #e5e7eb;
 }
 
-.red::before { background: #ef4444; }
-.green::before { background: #10b981; }
-.blue::before { background: #3b82f6; }
-.amber::before { background: #f59e0b; }
+.kpi-bar {
+    height: 3px;
+    width: 100%;
+    border-radius: 2px;
+    margin-bottom: 14px;
+}
 
-.red .kpi-value { color: #f87171; }
-.green .kpi-value { color: #34d399; }
-.blue .kpi-value { color: #60a5fa; }
-.amber .kpi-value { color: #fbbf24; }
+.red { background: linear-gradient(90deg, #ef4444, #b91c1c); }
+.green { background: linear-gradient(90deg, #10b981, #047857); }
+.blue { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+.amber { background: linear-gradient(90deg, #f59e0b, #b45309); }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-def kpi(title, value, cls):
+def kpi(title, value, color_class):
     st.markdown(f"""
-    <div class="kpi {cls}">
+    <div class="kpi-card">
+        <div class="kpi-bar {color_class}"></div>
         <div class="kpi-title">{title}</div>
         <div class="kpi-value">{value:.2f}</div>
     </div>
@@ -146,15 +145,6 @@ with col3:
 
 with col4:
     kpi("Volatility", volatility, "amber")
-
-# -----------------
-# KPI RENDER
-# -----------------
-col1, col2, col3, col4 = st.columns(4)
-with col1: kpi("Peak Intensity", peak, "glow-red")
-with col2: kpi("Daily Minimum", low, "glow-green")
-with col3: kpi("Grid Average", avg, "glow-blue")
-with col4: kpi("Volatility", volatility, "glow-amber")
     
 # ----------------------------
 # GRAPH (BEST + WORST WINDOWS RESTORED)
