@@ -61,22 +61,67 @@ worst_window = df.nlargest(3, "carbon")
 
 st.markdown("## 📊 Grid Intelligence Overview")
 
-def kpi_card(title, value, color):
+st.markdown("""
+<style>
+
+.kpi-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.kpi-card {
+    background: #0b1220;
+    border-radius: 14px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+    transition: 0.25s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+}
+
+.kpi-title {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.kpi-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #e2e8f0;
+}
+
+.kpi-accent {
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+}
+
+.red { background: #ef4444; }
+.green { background: #10b981; }
+.blue { background: #3b82f6; }
+.amber { background: #f59e0b; }
+
+</style>
+""", unsafe_allow_html=True)
+
+
+def kpi_card(title, value, accent_class):
     st.markdown(f"""
-    <div style="
-        background: linear-gradient(135deg, {color});
-        padding: 18px;
-        border-radius: 16px;
-        text-align: center;
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    ">
-        <div style="color:#cbd5e1; font-size:13px; margin-bottom:6px;">
-            {title}
-        </div>
-        <div style="font-size:28px; font-weight:800; color:black;">
-            {value:.2f}
-        </div>
+    <div class="kpi-card">
+        <div class="kpi-accent {accent_class}"></div>
+        <div class="kpi-title">{title}</div>
+        <div class="kpi-value">{value:.2f}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -84,16 +129,17 @@ def kpi_card(title, value, color):
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    kpi_card("🔥 Peak Carbon", peak, "rgba(255,0,80,0.25), rgba(255,0,80,0.08)")
+    kpi_card("Peak Carbon", peak, "red")
 
 with col2:
-    kpi_card("🌱 Lowest Carbon", low, "rgba(0,255,150,0.25), rgba(0,255,150,0.08)")
+    kpi_card("Lowest Carbon", low, "green")
 
 with col3:
-    kpi_card("📊 Average", avg, "rgba(0,200,255,0.25), rgba(0,200,255,0.08)")
+    kpi_card("Average Carbon", avg, "blue")
 
 with col4:
-    kpi_card("📉 Volatility", volatility, "rgba(180,0,255,0.25), rgba(180,0,255,0.08)")
+    kpi_card("Volatility", volatility, "amber")
+    
 # ----------------------------
 # GRAPH (BEST + WORST WINDOWS RESTORED)
 # ----------------------------
