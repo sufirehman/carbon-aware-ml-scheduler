@@ -4,7 +4,7 @@ import numpy as np
 
 from core.rl_agent import RLScheduler
 from core.scheduler import CarbonScheduler
-
+import pandas as pd
 
 # -------------------------------
 # 1. BASELINE (NO SCHEDULING)
@@ -28,25 +28,36 @@ def run_baseline(train_function):
 # -------------------------------
 def run_with_heuristic(carbon_data, train_function):
     print("\nRunning with heuristic scheduler...")
-    
-    scheduler = CarbonScheduler()
-    
-    # Example: scheduler decides delay
-    delay = scheduler.decide(carbon_data)
-    
+
+    df = pd.DataFrame({
+        "from": range(len(carbon_data)),
+        "to": range(1, len(carbon_data) + 1),
+        "forecast": carbon_data,
+        "actual": carbon_data
+    })
+
+    scheduler = CarbonScheduler(df)
+
+    best, worst, _ = scheduler.find_optimal_window(
+        duration_minutes=60,
+        urgency="medium"
+    )
+
+    delay = int(max(best["delay_hours"], 0) * 3600)
+
     print(f"Heuristic delay: {delay} seconds")
-    
-    time.sleep(delay)
-    
+
+    time.sleep(min(delay, 5))  # safety cap for testing
+
     tracker = EmissionsTracker()
     tracker.start()
-    
+
     train_function()
-    
+
     emissions = tracker.stop()
-    
+
     print(f"Heuristic Emissions: {emissions} kg CO2")
-    
+
     return emissions
 
 
@@ -65,8 +76,7 @@ def run_with_rl(carbon_data, train_function):
     print(f"RL selected time index: {best_time}")
     
     # 🔥 Convert index → delay (important!)
-    delay = best_time   # assuming each step = 1 unit time
-    
+    delay = min(best_time, 5)    
     print(f"RL delay: {delay} seconds")
     
     time.sleep(delay)
