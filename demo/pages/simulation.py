@@ -1,18 +1,16 @@
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-
-from core.carbon_api import CarbonAPI
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+from core.carbon_api import CarbonAPI
+# Get the absolute path to the 'Carbon-Aware-MLOps' root directory
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 
+# Add root to sys.path if it's not already there
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 from core.experiment import run_experiment
 
 # ----------------------------
