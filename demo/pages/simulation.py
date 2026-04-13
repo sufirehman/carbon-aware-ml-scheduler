@@ -1,17 +1,27 @@
-import streamlit as st
-import pandas as pd
-import plotly.graph_objects as go
 import sys
 import os
 
-from core.carbon_api import CarbonAPI
-# Get the absolute path to the 'Carbon-Aware-MLOps' root directory
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+# 1. Find the root of the project (Carbon-Aware-MLOps)
+# This looks 2 levels up from demo/pages/
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir))
 
-# Add root to sys.path if it's not already there
-if ROOT_DIR not in sys.path:
-    sys.path.insert(0, ROOT_DIR)
-from core.experiment import run_experiment
+# 2. Add the root to the VERY START of the python path
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# 3. Import using the full package path
+try:
+    from core.experiment import run_experiment
+except ImportError:
+    # Backup for different cloud structures
+    sys.path.append(os.getcwd())
+    from core.experiment import run_experiment
+
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+from core.carbon_api import CarbonAPI
 
 # ----------------------------
 # PAGE CONFIG
