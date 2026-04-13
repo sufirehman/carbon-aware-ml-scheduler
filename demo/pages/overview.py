@@ -12,7 +12,6 @@ from core.scheduler import CarbonScheduler
 from core.simulator import MLTrainingSimulator
 from core.report_generator import generate_report
 
-
 # ----------------------------
 # PAGE CONFIG
 # ----------------------------
@@ -36,7 +35,6 @@ Real-time optimization of ML workloads using UK grid carbon intelligence
 </div>
 """, unsafe_allow_html=True)
 
-
 # ----------------------------
 # SIDEBAR
 # ----------------------------
@@ -45,24 +43,26 @@ st.sidebar.header("⚙️ Configuration")
 duration = st.sidebar.slider("Training Duration (minutes)", 30, 240, 60)
 urgency = st.sidebar.selectbox("Urgency Level", ["low", "medium", "high"])
 
-
 # ----------------------------
-# RUN BUTTON + LOADING UX
+# RUN BUTTON
 # ----------------------------
 if st.button("🚀 Run Optimization"):
 
-    with st.spinner("Analyzing grid carbon patterns and optimizing workload..."):
+    with st.spinner("Analyzing carbon patterns and optimizing workload..."):
 
+        # DATA
         api = CarbonAPI()
         df = api.get_24h_forecast()
         df["carbon"] = df["actual"].fillna(df["forecast"])
 
+        # SCHEDULER
         scheduler = CarbonScheduler(df)
         best, worst, _ = scheduler.find_optimal_window(
             duration_minutes=duration,
             urgency=urgency
         )
 
+        # SIMULATION
         sim = MLTrainingSimulator()
         runtime = sim.simulate_training(duration_minutes=1)
 
@@ -84,7 +84,6 @@ if st.button("🚀 Run Optimization"):
             "ready": True
         })
 
-
 # ----------------------------
 # RESULTS
 # ----------------------------
@@ -103,40 +102,41 @@ if st.session_state.get("ready"):
     )
 
     # ----------------------------
-    # 🔥 HERO INSIGHT (THIS IS THE WOW PART)
+    # 🔥 HERO INSIGHT
     # ----------------------------
     st.markdown(f"""
     <div style="
         background: linear-gradient(135deg, rgba(0,201,255,0.15), rgba(146,254,157,0.1));
-        padding: 25px;
+        padding: 28px;
         border-radius: 18px;
         border: 1px solid rgba(255,255,255,0.08);
         text-align:center;
         margin-top:20px;
     ">
         <h2 style="margin-bottom:10px;">🚀 {savings:.1f}% Emissions Reduction Achieved</h2>
-        <p style="color:#94a3b8;">
-        By delaying training by <b>{delay:.1f} hours</b>, the system selects a significantly lower-carbon window.
+        <p style="color:#94a3b8; font-size:16px;">
+        Delay execution by <b>{delay:.1f} hours</b> to shift into a lower-carbon grid window.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-
     # ----------------------------
-    # KPI CARDS (PREMIUM STYLE)
+    # KPI CARDS
     # ----------------------------
     st.markdown("## 📊 Optimization Metrics")
 
     def card(title, value, color):
         st.markdown(f"""
         <div style="
-            background: #0b1220;
+            background: linear-gradient(180deg, #0b1220, #070b14);
             padding:18px;
             border-radius:14px;
-            border:1px solid rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.06);
         ">
-            <div style="color:#94a3b8; font-size:12px;">{title}</div>
-            <div style="font-size:28px; font-weight:800; color:{color}; margin-top:6px;">
+            <div style="color:#94a3b8; font-size:12px; letter-spacing:0.08em;">
+                {title}
+            </div>
+            <div style="font-size:30px; font-weight:800; color:{color}; margin-top:6px;">
                 {value}
             </div>
         </div>
@@ -156,9 +156,8 @@ if st.session_state.get("ready"):
     with c4:
         card("Delay Applied", f"{delay:.1f} hrs", "#f59e0b")
 
-
     # ----------------------------
-    # 📈 DIFFERENT GRAPH (NOT SAME AS FORECAST)
+    # 📈 DECISION GRAPH (DIFFERENT FROM FORECAST)
     # ----------------------------
     st.markdown("## 📈 Decision Timeline")
 
@@ -172,12 +171,11 @@ if st.session_state.get("ready"):
         name="Carbon Trend"
     ))
 
-    # highlight ONLY decision windows (cleaner than forecast page)
     fig.add_vrect(
         x0=best["start"],
         x1=best["end"],
         fillcolor="#22c55e",
-        opacity=0.2,
+        opacity=0.25,
         annotation_text="Optimal"
     )
 
@@ -199,9 +197,8 @@ if st.session_state.get("ready"):
 
     st.plotly_chart(fig, use_container_width=True)
 
-
     # ----------------------------
-    # ⚖️ VISUAL COMPARISON (BETTER UX)
+    # ⚖️ COMPARISON CHART
     # ----------------------------
     st.markdown("## ⚖️ Strategy Comparison")
 
@@ -222,7 +219,6 @@ if st.session_state.get("ready"):
 
     st.plotly_chart(fig2, use_container_width=True)
 
-
     # ----------------------------
     # REPORT
     # ----------------------------
@@ -232,8 +228,11 @@ if st.session_state.get("ready"):
         file = generate_report(savings, best, worst)
 
         with open(file, "rb") as f:
-            st.download_button("Download Report", f, file_name="carbon_report.pdf")
-
+            st.download_button(
+                "Download Report",
+                f,
+                file_name="carbon_report.pdf"
+            )
 
     # ----------------------------
     # FINAL INSIGHT
