@@ -2,7 +2,7 @@
 
 A reinforcement learning–enhanced carbon intelligence system that dynamically schedules machine learning workloads based on real-time and forecasted UK electricity grid carbon intensity.
 
-The system combines **carbon forecasting, optimization heuristics, and adaptive reinforcement learning** to intelligently shift compute workloads into low-emission periods — reducing the environmental impact of large-scale AI training.
+The system combines **carbon forecasting, optimization heuristics, and adaptive reinforcement learning** to intelligently shift compute workloads into low-emission periods, reducing the environmental impact of large-scale AI training.
 
 ---
 
