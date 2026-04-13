@@ -59,74 +59,93 @@ worst_window = df.nlargest(3, "carbon")
 # KPI SECTION 
 #  ----------------
 
-# -----------------
-# MODERN GLASS UI SECTION 
-# -----------------
+st.markdown("## 📊 Grid Intelligence Overview")
 
 st.markdown("""
 <style>
-/* Main Container Styling */
-.stApp {
-    background: radial-gradient(circle at top right, #0e1726, #010409);
+
+.kpi-wrap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 10px;
 }
 
-.kpi-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    transition: all 0.3s ease-in-out;
-    text-align: center;
+.kpi {
+    background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: 0.25s ease;
 }
 
-.kpi-card:hover {
-    transform: translateY(-5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.5);
+.kpi:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+}
+
+.kpi::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
 }
 
 .kpi-title {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    font-weight: 500;
 }
 
 .kpi-value {
-    font-size: 2.2rem;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    background: white;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 34px;
+    font-weight: 800;
+    color: #e5e7eb;
 }
 
-/* Dynamic Glow Accents */
-.glow-red:hover { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
-.glow-green:hover { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
-.glow-blue:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-.glow-amber:hover { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+.red::before { background: #ef4444; }
+.green::before { background: #10b981; }
+.blue::before { background: #3b82f6; }
+.amber::before { background: #f59e0b; }
 
-.unit {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin-left: 4px;
-}
+.red .kpi-value { color: #f87171; }
+.green .kpi-value { color: #34d399; }
+.blue .kpi-value { color: #60a5fa; }
+.amber .kpi-value { color: #fbbf24; }
+
 </style>
 """, unsafe_allow_html=True)
 
-def kpi_card(title, value, glow_class):
+
+def kpi(title, value, cls):
     st.markdown(f"""
-    <div class="kpi-card {glow_class}">
+    <div class="kpi {cls}">
         <div class="kpi-title">{title}</div>
-        <div class="kpi-value">{value:.1f}<span class="unit">g</span></div>
+        <div class="kpi-value">{value:.2f}</div>
     </div>
     """, unsafe_allow_html=True)
+
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    kpi("Peak Carbon", peak, "red")
+
+with col2:
+    kpi("Lowest Carbon", low, "green")
+
+with col3:
+    kpi("Average Carbon", avg, "blue")
+
+with col4:
+    kpi("Volatility", volatility, "amber")
 
 # -----------------
 # KPI RENDER
