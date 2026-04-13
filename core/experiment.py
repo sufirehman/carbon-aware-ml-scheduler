@@ -3,7 +3,7 @@ import time
 import numpy as np
 
 from core.rl_agent import RLScheduler
-from core.scheduler import Scheduler
+from core.scheduler import CarbonScheduler
 
 
 # -------------------------------
@@ -29,7 +29,7 @@ def run_baseline(train_function):
 def run_with_heuristic(carbon_data, train_function):
     print("\nRunning with heuristic scheduler...")
     
-    scheduler = Scheduler()
+    scheduler = CarbonScheduler()
     
     # Example: scheduler decides delay
     delay = scheduler.decide(carbon_data)
