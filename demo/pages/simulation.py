@@ -29,9 +29,9 @@ st.markdown("Run baseline, heuristic, and RL experiments with real emissions mea
 def train_function():
     import numpy as np
 
-    x = np.random.rand(200, 200)
+    x = np.random.rand(3000, 3000)
 
-    for _ in range(5):
+    for _ in range(30):
         x = x @ x
 
 
@@ -40,15 +40,26 @@ def train_function():
 # ----------------------------
 if st.button("🚀 Run Full Experiment"):
 
+    # Load carbon data
     api = CarbonAPI()
     df = api.get_24h_forecast()
-
     df["carbon"] = df["actual"].fillna(df["forecast"])
 
-    # IMPORTANT: pass FULL dataframe
-    results = run_experiment(df, train_function)
+    # Run experiment
+    results = run_experiment(df, train_function, runs=10)
 
-    results_df = pd.DataFrame([results])
+    # ----------------------------
+    # CONVERT TO DATAFRAME
+    # ----------------------------
+    results_df = pd.DataFrame([{
+        "Baseline (kg CO2)": results["baseline"],
+        "Heuristic (kg CO2)": results["heuristic"],
+        "RL (kg CO2)": results["rl"],
+
+        "Baseline (g CO2)": results["baseline"] * 1000,
+        "Heuristic (g CO2)": results["heuristic"] * 1000,
+        "RL (g CO2)": results["rl"] * 1000,
+    }])
 
     # ----------------------------
     # RESULTS TABLE
@@ -66,25 +77,25 @@ if st.button("🚀 Run Full Experiment"):
     fig.add_trace(go.Bar(
         name="Baseline",
         x=["Baseline"],
-        y=[results["baseline"]]
+        y=[results["baseline"] * 1000]
     ))
 
     fig.add_trace(go.Bar(
         name="Heuristic",
         x=["Heuristic"],
-        y=[results["heuristic"]]
+        y=[results["heuristic"] * 1000]
     ))
 
     fig.add_trace(go.Bar(
         name="RL",
         x=["RL"],
-        y=[results["rl"]]
+        y=[results["rl"] * 1000]
     ))
 
     fig.update_layout(
         barmode="group",
         title="Carbon Emissions Comparison",
-        yaxis_title="CO₂ Emissions (kg)",
+        yaxis_title="CO₂ Emissions (grams)",
         template="plotly_white"
     )
 

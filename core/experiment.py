@@ -72,7 +72,7 @@ def run_with_rl(df, train_function):
 
     print(f"RL delay: {delay} seconds")
 
-    time.sleep(delay)
+    delay = min(best_time * 2, 20)
 
     tracker = EmissionsTracker()
     tracker.start()
@@ -89,19 +89,24 @@ def run_with_rl(df, train_function):
 # -------------------------------
 # 4. MAIN EXPERIMENT
 # -------------------------------
-def run_experiment(df, train_function):
+def run_experiment(df, train_function, runs=10):
 
-    baseline = run_baseline(train_function)
-    heuristic = run_with_heuristic(df, train_function)
-    rl = run_with_rl(df, train_function)
+    baseline_list = []
+    heuristic_list = []
+    rl_list = []
 
-    print("\n=== FINAL RESULTS ===")
-    print(f"Baseline: {baseline}")
-    print(f"Heuristic: {heuristic}")
-    print(f"RL: {rl}")
+    for _ in range(runs):
+
+        baseline = run_baseline(train_function)
+        heuristic = run_with_heuristic(df, train_function)
+        rl = run_with_rl(df, train_function)
+
+        baseline_list.append(baseline)
+        heuristic_list.append(heuristic)
+        rl_list.append(rl)
 
     return {
-        "baseline": baseline,
-        "heuristic": heuristic,
-        "rl": rl
+        "baseline": sum(baseline_list) / runs,
+        "heuristic": sum(heuristic_list) / runs,
+        "rl": sum(rl_list) / runs
     }
