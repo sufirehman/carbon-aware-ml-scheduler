@@ -1,3 +1,4 @@
+print("EXPERIMENT LOADED")
 from codecarbon import EmissionsTracker
 import time
 import pandas as pd
