@@ -74,7 +74,7 @@ def kpi_card(title, value, color):
         <div style="color:#cbd5e1; font-size:13px; margin-bottom:6px;">
             {title}
         </div>
-        <div style="font-size:28px; font-weight:800; color:white;">
+        <div style="font-size:28px; font-weight:800; color:black;">
             {value:.2f}
         </div>
     </div>
