@@ -87,7 +87,7 @@ st.markdown("## 📊 System Impact Overview")
 
 c1, c2, c3, c4 = st.columns(4)
 
-c1.markdown('<div class="metric-card"><h2>↓ 18–35%</h2><p>CO₂ Reduction Potential</p></div>', unsafe_allow_html=True)
+c1.markdown('<div class="metric-card"><h2>↓ 18–70%</h2><p>CO₂ Reduction Potential</p></div>', unsafe_allow_html=True)
 c2.markdown('<div class="metric-card"><h2>⚡ Real-Time</h2><p>Grid Carbon Awareness</p></div>', unsafe_allow_html=True)
 c3.markdown('<div class="metric-card"><h2>🤖 RL-Based</h2><p>Adaptive Scheduling</p></div>', unsafe_allow_html=True)
 c4.markdown('<div class="metric-card"><h2>🌍 UK Grid</h2><p>Live Carbon Intensity Data</p></div>', unsafe_allow_html=True)
