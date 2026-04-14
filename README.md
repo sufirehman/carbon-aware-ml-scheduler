@@ -6,188 +6,204 @@
 ![Green AI](https://img.shields.io/badge/AI-Carbon%20Aware-success)
 ![Status](https://img.shields.io/badge/Status-Research%20Prototype-brightgreen)
 
+---
+
 ## ⚡ Executive Summary
 
-A reinforcement learning–enhanced carbon intelligence system that dynamically schedules machine learning workloads based on real-time and forecasted UK electricity grid carbon intensity.
+A **reinforcement learning–driven carbon-aware scheduling system** that dynamically optimizes machine learning workloads using real-time and forecasted UK electricity grid carbon intensity.
 
-The system integrates **carbon forecasting, heuristic optimization, and reinforcement learning-based decision-making** to shift compute workloads into low-emission periods, reducing the environmental footprint of large-scale AI training without degrading performance.
+The system integrates:
+
+- 🔮 Carbon forecasting  
+- 🧠 Heuristic optimization  
+- 🤖 Risk-aware reinforcement learning  
+
+to shift compute workloads into low-emission periods, achieving **significant CO₂ reduction without degrading performance**.
 
 ---
 
 ## 💡 Problem Statement
 
-Modern machine learning workloads are typically executed immediately, without consideration of electricity grid carbon intensity.
+Modern machine learning workloads are executed without environmental awareness.
 
-This leads to:
-- Unnecessary CO₂ emissions
-- Inefficient compute scheduling
-- No environmental awareness in ML pipelines
+This results in:
+
+- ❌ Unnecessary CO₂ emissions  
+- ❌ Inefficient compute utilization  
+- ❌ Lack of sustainability in ML pipelines  
 
 ---
 
 ## 🚀 Proposed Solution
 
-This system introduces a **carbon-aware compute scheduling layer** that transforms ML training from a time-fixed process into an **intelligent, emission-optimized decision system**.
+This project introduces a **carbon-aware scheduling layer** that transforms ML training into an **intelligent decision-making system**.
 
-It continuously evaluates grid carbon intensity and determines optimal execution timing using:
+It continuously evaluates grid conditions and optimizes execution timing using:
 
-- Forecast-based carbon prediction
-- Heuristic optimization windows
-- Reinforcement learning policy optimization
+- Real-time carbon intensity signals  
+- Forecast-based prediction  
+- Heuristic scheduling strategies  
+- Reinforcement learning policy optimization  
 
 ---
 
 ## 🧠 Key Innovations
 
-- 🔁 First-principles integration of **carbon intensity as a scheduling signal for ML workloads**
-- 🤖 Hybrid scheduling architecture combining:
-  - Heuristic optimization
-  - Reinforcement Learning agent
-  - Real-time forecasting
-- 📉 Dynamic workload shifting based on environmental cost minimization
-- 📡 Real-time carbon-aware decision pipeline for ML training simulation
-- 🧪 End-to-end emission measurement using CodeCarbon instrumentation
+- 🌱 Carbon intensity used as a **first-class scheduling signal**
+- 🤖 **Hybrid scheduling architecture**:
+  - Heuristic optimizer  
+  - Reinforcement learning agent  
+- ⚖️ **Multi-objective RL reward design**:
+  - Carbon intensity minimization  
+  - Forecast uncertainty handling  
+  - Delay-aware optimization  
+- 📡 End-to-end **carbon-aware decision pipeline**
+- 🧪 Integrated **CodeCarbon emissions tracking**
+- 🔁 Stochastic simulation with realistic grid variability  
 
 ---
 
 ## ⚙️ System Architecture
-             ┌──────────────────────────────┐
-             │  UK Grid Carbon Intelligence  │
-             │  (Real-time + Forecast API)   │
-             └──────────────┬───────────────┘
-                            ↓
-             ┌──────────────────────────────┐
-             │  Carbon Scheduling Engine     │
-             │  - Heuristic Optimizer       │
-             │  - RL-based Policy Agent     │
-             └──────────────┬───────────────┘
-                            ↓
-             ┌──────────────────────────────┐
-             │  ML Workload Simulator       │
-             │  - Synthetic Training Load   │
-             │  - CodeCarbon Tracking       │
-             └──────────────┬───────────────┘
-                            ↓
-             ┌──────────────────────────────┐
-             │  Analytics Dashboard         │
-             │  - Streamlit UI              │
-             │  - Forecast Explorer         │
-             │  - Simulation Lab            │
-             └──────────────────────────────┘
 
+```
+┌──────────────────────────────┐
+│ UK Grid Carbon Intelligence │
+│ (Real-time + Forecast API)  │
+└──────────────┬───────────────┘
+               ↓
+┌──────────────────────────────┐
+│ Carbon Scheduling Engine     │
+│ - Heuristic Optimizer        │
+│ - RL Policy Agent (Adaptive) │
+└──────────────┬───────────────┘
+               ↓
+┌──────────────────────────────┐
+│ ML Workload Simulator        │
+│ - Synthetic Training Load    │
+│ - CodeCarbon Tracking        │
+└──────────────┬───────────────┘
+               ↓
+┌──────────────────────────────┐
+│ Analytics Dashboard          │
+│ - Streamlit UI               │
+│ - Forecast Explorer          │
+│ - Simulation Lab             │
+└──────────────────────────────┘
+```
 
 ---
 
 ## ✨ Key Features
 
-- 📡 Real-time UK National Grid carbon intensity integration  
-- 🔮 Carbon forecasting engine (24-hour horizon analysis)  
-- 🧠 Heuristic + reinforcement learning scheduling system  
-- 🤖 Adaptive RL-based workload timing optimization  
-- 🧪 ML training simulation with energy/emissions tracking  
-- 📊 Interactive multi-page Streamlit analytics dashboard  
-- 📈 Carbon peak/low detection and optimal window identification  
-- ⚙️ Comparative emissions benchmarking (Baseline vs Optimized)  
+- 📡 Real-time UK carbon intensity integration  
+- 🔮 24-hour carbon forecasting  
+- 🧠 Heuristic + RL scheduling engine  
+- 🤖 Risk-aware reinforcement learning agent  
+- 🧪 ML workload simulation with emissions tracking  
+- 📊 Interactive multi-page Streamlit dashboard  
+- 📈 Carbon peak/low detection  
+- ⚙️ Multi-strategy emissions comparison  
 
 ---
 
 ## 📊 Experimental Results
 
-| Scheduling Method | Carbon Reduction |
-|------------------|------------------|
-| Baseline (No scheduling) | 0% |
-| Heuristic Scheduling | 10–25% |
-| Reinforcement Learning | 20–40% |
+| Scheduling Method        | Carbon Reduction |
+|-------------------------|------------------|
+| Baseline (No scheduling)| 0%               |
+| Heuristic Scheduling    | 10–25%           |
+| Reinforcement Learning  | 20–40%           |
 
 ---
 
 ## 🧪 System Modules
 
 ### 📈 Forecast Intelligence Layer
-- 24-hour carbon intensity forecasting
-- Peak and low-carbon detection
-- Optimal training window identification
+- Carbon intensity forecasting  
+- Peak/low detection  
+- Optimal window identification  
 
 ### ⚙️ Scheduling Engine
-- Rule-based heuristic optimizer
-- Reinforcement learning agent
-- Dynamic delay-based workload shifting
+- Rule-based heuristic optimization  
+- Reinforcement learning agent  
+- Dynamic workload shifting  
 
 ### 🧪 Simulation Environment
-- Synthetic ML training workload generation
-- CodeCarbon-based emission tracking
-- Multi-strategy comparative evaluation
+- Synthetic ML workload generation  
+- CodeCarbon-based emissions tracking  
+- Multi-strategy benchmarking  
 
 ### 📊 Analytics Dashboard
-- KPI-driven carbon intelligence interface
-- Interactive emissions visualization
-- Decision-support insights for scheduling
+- KPI-driven insights  
+- Interactive visualizations  
+- Decision-support system  
 
 ---
 
 ## 🧰 Tech Stack
 
 - Python  
-- Streamlit (Multi-page UI system)  
-- Plotly (Interactive visualization)  
-- Pandas (Data processing)  
-- CodeCarbon (Emissions tracking)  
-- Reinforcement Learning (custom scheduling agent)  
-- UK National Grid Carbon Intensity API  
+- Streamlit  
+- Plotly  
+- Pandas  
+- CodeCarbon  
+- Reinforcement Learning (custom agent)  
+- UK Carbon Intensity API  
 
 ---
 
 ## 🌍 Impact
 
-This project demonstrates a practical implementation of **Green AI infrastructure design**, enabling:
+This project demonstrates a **practical implementation of Green AI systems**, enabling:
 
-- Reduction in compute-related CO₂ emissions  
-- Carbon-aware machine learning pipelines  
-- Energy-efficient AI training strategies  
-- Sustainable cloud compute scheduling  
-- Real-time environmental decision systems for ML workloads  
+- Reduced compute-related CO₂ emissions  
+- Carbon-aware ML pipelines  
+- Energy-efficient AI training  
+- Sustainable cloud computing strategies  
 
-This aligns with emerging paradigms in:
-- Sustainable AI systems  
+Aligned with:
+
+- Sustainable AI  
 - Green cloud computing  
 - Energy-aware MLOps  
-- Carbon-efficient computing infrastructure  
+- Net-zero infrastructure goals  
 
 ---
 
 ## 🌍 Environmental Impact (Estimated)
 
-This system translates carbon savings into real-world impact:
+| CO₂ Saved | Real-World Equivalent |
+|----------|----------------------|
+| 1 kg     | 🌳 ~0.045 trees      |
+| 10 kg    | 🚗 ~40 km driving    |
+| 100 kg   | ✈️ Short-haul flight |
 
-| Metric | Equivalent Impact |
-|--------|------------------|
-| 1 kg CO₂ saved | 🌳 ~0.045 trees needed for absorption |
-| 10 kg CO₂ saved | 🚗 ~40 km of driving avoided |
-| 100 kg CO₂ saved | ✈️ ~short-haul flight reduction equivalent |
+### 📊 Example Impact
 
-### 📊 Example Output
-- Up to **20–40% CO₂ reduction** in ML training workloads  
-- Significant savings when scaled to cloud workloads  
-- Demonstrates viability of carbon-aware AI infrastructure at production scale  
+- Up to **20–40% CO₂ reduction**
+- Scalable to large cloud workloads  
+- Enables carbon-aware AI at production level  
+
+---
 
 ## 🚀 Future Enhancements
 
-- Multi-region carbon-aware scheduling (EU / US grids)
-- Kubernetes-native ML workload orchestration
-- Integration with cloud ML pipelines (AWS / Azure / GCP)
-- Real-time production deployment system
-- Automated carbon-aware CI/CD for ML training jobs
+- Multi-region scheduling (EU / US grids)  
+- Kubernetes-based orchestration  
+- Cloud ML pipeline integration (AWS / Azure / GCP)  
+- Real-time production deployment  
+- Carbon-aware CI/CD for ML training  
 
 ---
 
 ## 👨‍💻 Author
 
-**Sufiyan Ul Rehman**
-
+**Sufiyan Ul Rehman**  
 Building intelligent, carbon-aware AI systems for sustainable machine learning infrastructure.
 
 ---
 
 ## 📌 Closing Statement
 
-This system demonstrates that the future of machine learning infrastructure is not only about performance and accuracy, but also about **when and how sustainably computation is executed**.
+The future of machine learning is not only about **accuracy and performance**,  
+but also about **when and how sustainably computation is executed**.
