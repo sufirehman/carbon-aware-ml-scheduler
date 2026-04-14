@@ -1,32 +1,54 @@
 import numpy as np
 import random
 
+
 class RLScheduler:
     def __init__(self, carbon_values, episodes=1000):
         self.carbon = carbon_values
         self.n = len(carbon_values)
         self.episodes = episodes
 
-        # Q-table (state = time index)
+        # Q-table (value per time index)
         self.q_table = np.zeros(self.n)
 
         # Hyperparameters
         self.alpha = 0.1      # learning rate
         self.gamma = 0.9      # discount factor
-        # self.epsilon = 0.3    # exploration
+        self.epsilon = 0.3    # initial exploration
 
+        # 🔥 NEW: multi-objective weights (TUNE THESE IN PAPER)
+        self.lambda_delay = 0.05
+        self.lambda_uncertainty = 0.5
+
+    # ----------------------------
+    # 🔥 NEW REWARD FUNCTION
+    # ----------------------------
     def reward(self, t, window=3):
-        if t + window >= len(self.carbon):
-            return -999  # invalid
 
-        avg = sum(self.carbon[t:t+window]) / window
+        # invalid window
+        if t + window >= self.n:
+            return -999
 
-        return -avg
+        segment = self.carbon[t:t + window]
 
+        avg_carbon = np.mean(segment)
+        uncertainty = np.std(segment)   # proxy for forecast uncertainty
+
+        delay_penalty = t * self.lambda_delay
+
+        # 🔥 multi-objective reward
+        reward = -avg_carbon - (self.lambda_uncertainty * uncertainty) - delay_penalty
+
+        return reward
+
+    # ----------------------------
+    # TRAINING LOOP
+    # ----------------------------
     def train(self):
+
         for ep in range(self.episodes):
 
-            # 🔥 EPSILON DECAY (THIS IS WHERE IT GOES)
+            # epsilon decay
             self.epsilon = max(0.05, 0.3 * (1 - ep / self.episodes))
 
             for t in range(self.n):
@@ -37,7 +59,6 @@ class RLScheduler:
                 else:
                     action = np.argmax(self.q_table)
 
-                # reward from chosen action
                 r = self.reward(action)
 
                 # Q-learning update
@@ -46,5 +67,6 @@ class RLScheduler:
                 )
 
         # best learned time index
-        best_time = np.argmax(self.q_table)
+        best_time = int(np.argmax(self.q_table))
+
         return best_time

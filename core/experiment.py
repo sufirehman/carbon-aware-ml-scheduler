@@ -46,26 +46,32 @@ def run_with_heuristic(df, train_function):
 
 
 # -------------------------------
-# 3. RL SCHEDULER
+# 3. RL SCHEDULER (IMPROVED)
 # -------------------------------
 def run_with_rl(df, train_function):
-    from core.rl_agent import RLScheduler   # 🔥 moved here
+    from core.rl_agent import RLScheduler
 
-    print("\nRunning with RL scheduler...")
+    print("\nRunning with RL scheduler (risk-aware)...")
 
     carbon_values = df["carbon"].values
-    rl_agent = RLScheduler(carbon_values)
 
+    rl_agent = RLScheduler(carbon_values, episodes=800)
     best_time = rl_agent.train()
 
-    delay = min(int(best_time), 5)
+    # 🔥 convert index → realistic delay
+    delay_seconds = int(best_time * 60)   # assuming 1 index = 1 minute
+    delay_seconds = min(delay_seconds, 5)  # keep demo fast
 
-    time.sleep(delay)
+    time.sleep(delay_seconds)
 
     tracker = EmissionsTracker()
     tracker.start()
     train_function()
-    return tracker.stop()
+    emissions = tracker.stop()
+
+    print(f"RL Emissions: {emissions} kg CO2")
+
+    return emissions
 
 
 # -------------------------------
