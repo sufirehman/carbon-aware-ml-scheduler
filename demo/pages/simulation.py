@@ -63,9 +63,11 @@ if st.button("🚀 Run Full Experiment"):
 
     api = CarbonAPI()
     df = api.get_24h_forecast()
-    noise=np.random.normal(0,5,size=len(df))
-    df["carbon"]=df["carbon"]+noise
     df["carbon"] = df["actual"].fillna(df["forecast"])
+
+    # Add stochastic noise (for RL realism)
+    noise = np.random.normal(0, 5, size=len(df))
+    df["carbon"] = df["carbon"] + noise
 
     # ----------------------------
     # STEP 2: RUN EXPERIMENT
