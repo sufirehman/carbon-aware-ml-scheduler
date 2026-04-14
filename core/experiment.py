@@ -55,7 +55,7 @@ def run_with_rl(df, train_function):
 
     carbon_values = df["carbon"].values
 
-    rl_agent = RLScheduler(carbon_values, episodes=800)
+    rl_agent = RLScheduler(carbon_values, episodes=4000)
     best_time = rl_agent.train()
 
     # 🔥 convert index → realistic delay
@@ -77,24 +77,35 @@ def run_with_rl(df, train_function):
 # -------------------------------
 # 4. MAIN EXPERIMENT
 # -------------------------------
-def run_experiment(df, train_function, runs=3):
+def run_experiment(df, train_function, runs=5):
 
-    baseline_list = []
-    heuristic_list = []
-    rl_list = []
+    records = []
 
-    for _ in range(runs):
+    for i in range(runs):
+
+        print(f"\n--- RUN {i+1} ---")
 
         baseline = run_baseline(train_function)
         heuristic = run_with_heuristic(df, train_function)
         rl = run_with_rl(df, train_function)
 
-        baseline_list.append(baseline)
-        heuristic_list.append(heuristic)
-        rl_list.append(rl)
+        records.append({
+            "run": i + 1,
+            "baseline": baseline,
+            "heuristic": heuristic,
+            "rl": rl
+        })
 
+    # convert to dataframe
+    results_df = pd.DataFrame(records)
+
+    # save to CSV (🔥 THIS IS THE KEY PART)
+    results_df.to_csv("emissions.csv", index=False)
+
+    # return both mean + raw data
     return {
-        "baseline": sum(baseline_list) / runs,
-        "heuristic": sum(heuristic_list) / runs,
-        "rl": sum(rl_list) / runs
+        "baseline": results_df["baseline"].mean(),
+        "heuristic": results_df["heuristic"].mean(),
+        "rl": results_df["rl"].mean(),
+        "raw": results_df
     }

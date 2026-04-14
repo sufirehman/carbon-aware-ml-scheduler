@@ -76,7 +76,7 @@ if st.button("🚀 Run Full Experiment"):
     progress.progress(30)
 
     with st.spinner("Running experiments... please wait ⏳"):
-        results = run_experiment(df, train_function, runs=3)
+        results = run_experiment(df, train_function, runs=5)
 
     progress.progress(70)
 

@@ -3,7 +3,7 @@ import random
 
 
 class RLScheduler:
-    def __init__(self, carbon_values, episodes=1000):
+    def __init__(self, carbon_values, episodes=3000):
         self.carbon = carbon_values
         self.n = len(carbon_values)
         self.episodes = episodes
@@ -16,12 +16,12 @@ class RLScheduler:
         self.gamma = 0.9      # discount factor
         self.epsilon = 0.3    # initial exploration
 
-        # 🔥 NEW: multi-objective weights (TUNE THESE IN PAPER)
-        self.lambda_delay = 0.05
+        #  NEW: multi-objective weights (TUNE THESE IN PAPER)
+        self.lambda_delay = 0.01
         self.lambda_uncertainty = 0.5
 
     # ----------------------------
-    # 🔥 NEW REWARD FUNCTION
+    #  NEW REWARD FUNCTION
     # ----------------------------
     def reward(self, t, window=3):
 
@@ -34,10 +34,15 @@ class RLScheduler:
         avg_carbon = np.mean(segment)
         uncertainty = np.std(segment)   # proxy for forecast uncertainty
 
-        delay_penalty = t * self.lambda_delay
+        # delay = how far we wait (later = more delay)
+        delay = t
 
-        # 🔥 multi-objective reward
-        reward = -avg_carbon - (self.lambda_uncertainty * uncertainty) - delay_penalty
+        #  multi-objective reward
+        reward = (
+            -avg_carbon
+            - (self.lambda_uncertainty * uncertainty)
+            - (self.lambda_delay * delay)
+        )
 
         return reward
 
