@@ -41,9 +41,9 @@ st.markdown("Run baseline, heuristic, and RL experiments with real emissions mea
 def train_function():
     import numpy as np
 
-    x = np.random.rand(3000, 3000)
+    x = np.random.rand(4000, 4000)
 
-    for _ in range(30):
+    for _ in range(50):
         x = x @ x
 
 
@@ -66,7 +66,7 @@ if st.button("🚀 Run Full Experiment"):
     df["carbon"] = df["actual"].fillna(df["forecast"])
 
     # Add stochastic noise (for RL realism)
-    noise = np.random.normal(0, 5, size=len(df))
+    noise = np.random.normal(0, 15, size=len(df))
     df["carbon"] = df["carbon"] + noise
 
     # ----------------------------
