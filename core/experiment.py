@@ -104,8 +104,8 @@ def run_experiment(df, train_function, runs=5):
 
     # return both mean + raw data
     return {
-        "baseline": results_df["baseline"].mean(),
-        "heuristic": results_df["heuristic"].mean(),
-        "rl": results_df["rl"].mean(),
-        "raw": results_df
+    "baseline": float(results_df["baseline"].mean()),
+    "heuristic": float(results_df["heuristic"].mean()),
+    "rl": float(results_df["rl"].mean()),
+    "raw": results_df
     }

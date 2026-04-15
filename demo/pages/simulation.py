@@ -146,7 +146,13 @@ if st.button("🚀 Run Full Experiment"):
     # ----------------------------
     # INSIGHT
     # ----------------------------
-    best_method = min(results, key=lambda k: float(results[k]))
+    clean_results = {
+    "baseline": results["baseline"],
+    "heuristic": results["heuristic"],
+    "rl": results["rl"]
+    }
+
+    best_method = min(clean_results, key=clean_results.get)
 
     st.success(f"""
 🏆 **Best Performing Method: {best_method.upper()}**
