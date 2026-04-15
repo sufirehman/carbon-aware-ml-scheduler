@@ -1,50 +1,56 @@
 import numpy as np
 import random
 
+# sequential decision-making 
+# trade-off: wait vs run 
+# uncertainty handling
 
 class RLScheduler:
-    def __init__(self, carbon_values, episodes=3000):
+    def __init__(self, carbon_values, episodes=5000):
         self.carbon = carbon_values
         self.n = len(carbon_values)
         self.episodes = episodes
 
-        # Q-table (value per time index)
-        self.q_table = np.zeros(self.n)
+        # Q-table: state (time) x action (wait/run)
+        self.q_table = np.zeros((self.n, 2))
 
         # Hyperparameters
-        self.alpha = 0.1      # learning rate
-        self.gamma = 0.9      # discount factor
-        self.epsilon = 0.3    # initial exploration
+        self.alpha = 0.1
+        self.gamma = 0.9
+        self.epsilon = 0.3
 
-        #  NEW: multi-objective weights (TUNE THESE IN PAPER)
-        self.lambda_delay = 0.01
-        self.lambda_uncertainty = 0.5
+        # Multi-objective weights (IMPORTANT for paper)
+        self.lambda_delay = 0.02
+        self.lambda_uncertainty = 0.3
 
     # ----------------------------
-    #  NEW REWARD FUNCTION
+    # STEP FUNCTION (ENVIRONMENT)
     # ----------------------------
-    def reward(self, t, window=3):
+    def step(self, state, action):
 
-        # invalid window
-        if t + window >= self.n:
-            return -999
+        # action = 0 → WAIT
+        if action == 0:
+            next_state = min(state + 1, self.n - 1)
 
-        segment = self.carbon[t:t + window]
+            reward = -self.lambda_delay  # penalty for waiting
+            done = False
 
-        avg_carbon = np.mean(segment)
-        uncertainty = np.std(segment)   # proxy for forecast uncertainty
+        # action = 1 → EXECUTE
+        else:
+            if state >= self.n:
+                return state, -999, True
 
-        # delay = how far we wait (later = more delay)
-        delay = t
+            carbon = self.carbon[state]
 
-        #  multi-objective reward
-        reward = (
-            -avg_carbon
-            - (self.lambda_uncertainty * uncertainty)
-            - (self.lambda_delay * delay)
-        )
+            # local uncertainty (window-based)
+            window = self.carbon[max(0, state - 2): min(self.n, state + 2)]
+            uncertainty = np.std(window)
 
-        return reward
+            reward = -carbon - (self.lambda_uncertainty * uncertainty)
+            next_state = state
+            done = True
+
+        return next_state, reward, done
 
     # ----------------------------
     # TRAINING LOOP
@@ -53,25 +59,47 @@ class RLScheduler:
 
         for ep in range(self.episodes):
 
+            state = 0
+            done = False
+
             # epsilon decay
             self.epsilon = max(0.05, 0.3 * (1 - ep / self.episodes))
 
-            for t in range(self.n):
+            while not done:
 
-                # ε-greedy action selection
+                # ε-greedy
                 if random.random() < self.epsilon:
-                    action = random.randint(0, self.n - 1)
+                    action = random.randint(0, 1)
                 else:
-                    action = np.argmax(self.q_table)
+                    action = np.argmax(self.q_table[state])
 
-                r = self.reward(action)
+                next_state, reward, done = self.step(state, action)
 
-                # Q-learning update
-                self.q_table[action] = self.q_table[action] + self.alpha * (
-                    r + self.gamma * np.max(self.q_table) - self.q_table[action]
+                # Q update
+                self.q_table[state, action] += self.alpha * (
+                    reward
+                    + self.gamma * np.max(self.q_table[next_state])
+                    - self.q_table[state, action]
                 )
 
-        # best learned time index
-        best_time = int(np.argmax(self.q_table))
+                state = next_state
 
-        return best_time
+                # safety break
+                if state >= self.n - 1:
+                    break
+
+        # ----------------------------
+        # INFERENCE (policy execution)
+        # ----------------------------
+        state = 0
+
+        while state < self.n:
+
+            action = np.argmax(self.q_table[state])
+
+            if action == 1:
+                return state  # EXECUTE HERE
+
+            state += 1
+
+        return self.n - 1  # fallback

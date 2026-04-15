@@ -59,8 +59,8 @@ def run_with_rl(df, train_function):
     best_time = rl_agent.train()
 
     # 🔥 convert index → realistic delay
-    delay_seconds = int(best_time * 60)   # assuming 1 index = 1 minute
-    delay_seconds = min(delay_seconds, 30)  # keep demo fast
+    delay_seconds = min(int(best_time * 2), 30)  
+    delay_seconds = min(delay_seconds, 30) 
 
     time.sleep(delay_seconds)
 
