@@ -66,8 +66,12 @@ if st.button("🚀 Run Full Experiment"):
     df["carbon"] = df["actual"].fillna(df["forecast"])
 
     # Add stochastic noise (for RL realism)
-    noise = np.random.normal(0, 15, size=len(df))
-    df["carbon"] = df["carbon"] + noise
+    base = df["carbon"].values
+
+    trend = np.sin(np.linspace(0, 3.14, len(df))) * 4
+    noise = np.random.normal(0, 6, len(df))
+
+    df["carbon"] = base + noise + trend
 
     # ----------------------------
     # STEP 2: RUN EXPERIMENT
@@ -147,9 +151,9 @@ if st.button("🚀 Run Full Experiment"):
     # INSIGHT
     # ----------------------------
     clean_results = {
-    "baseline": results["baseline"],
-    "heuristic": results["heuristic"],
-    "rl": results["rl"]
+    "baseline": float(results["baseline"]),
+    "heuristic": float(results["heuristic"]),
+    "rl": float(results["rl"])
     }
 
     best_method = min(clean_results, key=clean_results.get)

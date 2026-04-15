@@ -7,7 +7,6 @@ class CarbonScheduler:
 
         self.df = forecast_df.copy()
 
-        # ✅ FIX: ensure datetime
         self.df["from"] = pd.to_datetime(self.df["from"])
         self.df["to"] = pd.to_datetime(self.df["to"])
 
@@ -17,39 +16,36 @@ class CarbonScheduler:
             self.df["from"] - pd.Timestamp.utcnow()
         ).dt.total_seconds() / 3600
 
-        self.df["confidence"] = np.exp(-0.05 * self.df["hours_ahead"])
-
     def find_optimal_window(self, duration_minutes=60, urgency="medium"):
 
-        # ✅ FIX: prevent zero window
-        window_size = max(1, int(duration_minutes / 30))
+        window_size = max(2, int(duration_minutes / 30))
 
         results = []
 
         for i in range(len(self.df) - window_size):
+
             window = self.df.iloc[i:i + window_size]
 
-            weighted_carbon = np.average(
-                window["carbon"],
-                weights=window["confidence"]
-            )
+            # ✅ FAIR heuristic (no future weighting)
+            avg_carbon = window["carbon"].mean()
+            std_carbon = window["carbon"].std()
 
             delay_hours = window["hours_ahead"].iloc[0]
+
             penalty = self._urgency_penalty(delay_hours, urgency)
 
-            score = weighted_carbon + penalty
+            score = avg_carbon + 0.2 * std_carbon + penalty
 
             results.append({
                 "start": window["from"].iloc[0],
                 "end": window["to"].iloc[-1],
                 "score": score,
-                "avg_carbon": window["carbon"].mean(),
+                "avg_carbon": avg_carbon,
                 "delay_hours": delay_hours
             })
 
         results_df = pd.DataFrame(results)
 
-        # ✅ FIX: handle empty case
         if len(results_df) == 0:
             raise ValueError("No valid scheduling windows found.")
 

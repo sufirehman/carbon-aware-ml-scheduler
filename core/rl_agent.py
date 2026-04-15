@@ -1,105 +1,126 @@
 import numpy as np
 import random
 
-# sequential decision-making 
-# trade-off: wait vs run 
-# uncertainty handling
 
 class RLScheduler:
-    def __init__(self, carbon_values, episodes=5000):
+    def __init__(self, carbon_values, episodes=8000, max_delay=20):
         self.carbon = carbon_values
         self.n = len(carbon_values)
         self.episodes = episodes
+        self.max_delay = max_delay
 
-        # Q-table: state (time) x action (wait/run)
+        # Q-table: state x action (0 = wait, 1 = execute)
         self.q_table = np.zeros((self.n, 2))
 
-        # Hyperparameters
+        # hyperparameters
         self.alpha = 0.1
-        self.gamma = 0.9
-        self.epsilon = 0.3
+        self.gamma = 0.95
+        self.epsilon = 0.4
 
-        # Multi-objective weights (IMPORTANT for paper)
-        self.lambda_delay = 0.02
-        self.lambda_uncertainty = 0.3
+        # reward weights (tuned for carbon-aware scheduling)
+        self.w_carbon = 1.0
+        self.w_uncertainty = 0.6
+        self.w_delay = 0.05
+        self.reward_scale = 10.0  # stability improvement
 
     # ----------------------------
-    # STEP FUNCTION (ENVIRONMENT)
+    # CONTEXT WINDOW (LOCAL GRID SIGNAL)
     # ----------------------------
-    def step(self, state, action):
+    def get_context(self, t):
+        window = self.carbon[max(0, t - 3):min(self.n, t + 3)]
+        return np.mean(window), np.std(window)
 
-        # action = 0 → WAIT
+    # ----------------------------
+    # ENVIRONMENT STEP FUNCTION
+    # ----------------------------
+    def step(self, state, action, delay_count):
+
+        mean_c, std_c = self.get_context(state)
+
+        global_mean = np.mean(self.carbon)
+        peak_penalty = max(0, mean_c - global_mean)
+
+        # ----------------------------
+        # ACTION 0: WAIT
+        # ----------------------------
         if action == 0:
             next_state = min(state + 1, self.n - 1)
+            delay_count += 1
 
-            reward = -self.lambda_delay  # penalty for waiting
+            reward = -self.w_delay * delay_count
+            reward = reward / self.reward_scale
+
             done = False
+            return next_state, reward, delay_count, done
 
-        # action = 1 → EXECUTE
+        # ----------------------------
+        # ACTION 1: EXECUTE
+        # ----------------------------
         else:
-            if state >= self.n:
-                return state, -999, True
+            reward = (
+                -self.w_carbon * mean_c
+                -self.w_uncertainty * std_c
+                -self.w_delay * delay_count
+                -2.0 * peak_penalty
+            )
 
-            carbon = self.carbon[state]
+            reward = reward / self.reward_scale
 
-            # local uncertainty (window-based)
-            window = self.carbon[max(0, state - 2): min(self.n, state + 2)]
-            uncertainty = np.std(window)
-
-            reward = -carbon - (self.lambda_uncertainty * uncertainty)
-            next_state = state
             done = True
-
-        return next_state, reward, done
+            return state, reward, delay_count, done
 
     # ----------------------------
-    # TRAINING LOOP
+    # TRAINING LOOP (Q-LEARNING)
     # ----------------------------
     def train(self):
 
         for ep in range(self.episodes):
 
-            state = 0
+            state = random.randint(0, self.n // 2)
+            delay_count = 0
             done = False
 
             # epsilon decay
-            self.epsilon = max(0.05, 0.3 * (1 - ep / self.episodes))
+            self.epsilon = max(0.05, 0.4 * (1 - ep / self.episodes))
 
             while not done:
 
-                # ε-greedy
+                # ε-greedy action selection
                 if random.random() < self.epsilon:
                     action = random.randint(0, 1)
                 else:
                     action = np.argmax(self.q_table[state])
 
-                next_state, reward, done = self.step(state, action)
+                next_state, reward, delay_count, done = self.step(
+                    state, action, delay_count
+                )
 
-                # Q update
+                # Q-learning update
+                best_next = np.max(self.q_table[next_state])
+
                 self.q_table[state, action] += self.alpha * (
-                    reward
-                    + self.gamma * np.max(self.q_table[next_state])
-                    - self.q_table[state, action]
+                    reward + self.gamma * best_next - self.q_table[state, action]
                 )
 
                 state = next_state
 
-                # safety break
                 if state >= self.n - 1:
                     break
 
         # ----------------------------
-        # INFERENCE (policy execution)
+        # POLICY EXECUTION (INFERENCE)
         # ----------------------------
         state = 0
+        delay_count = 0
 
         while state < self.n:
 
             action = np.argmax(self.q_table[state])
 
             if action == 1:
-                return state  # EXECUTE HERE
+                return state  # execute time chosen
 
             state += 1
+            delay_count += 1
 
-        return self.n - 1  # fallback
+        return self.n - 1
