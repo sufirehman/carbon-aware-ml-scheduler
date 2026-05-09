@@ -136,28 +136,6 @@ html, body, .stApp {
     max-width: 650px; margin: 0 auto 44px;
 }
 
-/* ── FIXING THE BUTTONS COLOR & REDIRECTION ── */
-/* Dashboard Button (Red) */
-div[data-testid="stHorizontalBlock"] div:nth-child(1) [data-testid="stPageLink-NavLink"] {
-    background-color: #ef4444 !important;
-    color: white !important;
-    border: none !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    border-radius: 8px !important;
-    padding: 10px 24px !important;
-    justify-content: center !important;
-}
-/* Simulation Button (Secondary) */
-div[data-testid="stHorizontalBlock"] div:nth-child(2) [data-testid="stPageLink-NavLink"] {
-    background-color: transparent !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    font-family: 'IBM Plex Mono', monospace !important;
-    border-radius: 8px !important;
-    padding: 10px 24px !important;
-    justify-content: center !important;
-}
-
 /* ── IMPACT STRIP ── */
 .impact-strip {
     display: grid;
@@ -264,6 +242,13 @@ div[data-testid="stHorizontalBlock"] div:nth-child(2) [data-testid="stPageLink-N
 }
 .footer-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #64748b; }
 .footer-l span { color: #22c55e; }
+
+/* Streamlit button overrides */
+div.stButton > button {
+    font-family: 'IBM Plex Mono', monospace !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -314,16 +299,18 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
-# BUTTONS (FIXED & SIZED)
-# =========================
+# Buttons
 col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
     b1, b2 = st.columns(2)
     with b1:
-        st.page_link("pages/overview.py", label="⟶ Launch Dashboard")
+        if st.button("⟶ Launch Dashboard", type="primary", use_container_width=True):
+            st.toast("Dashboard Loading...")
+            st.page_link("pages/overview.py", label="⟶ Launch Dashboard", icon="")
     with b2:
-        st.page_link("pages/simulation.py", label="Run Simulation Lab")
+        if st.button("Run Simulation Lab", type="secondary", use_container_width=True):
+            st.toast("Simulation Initializing...")
+            st.page_link("pages/simulation.py", label="Run Simulation Lab", icon="🧪")
 
 # =========================
 # IMPACT STRIP
