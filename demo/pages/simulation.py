@@ -21,7 +21,7 @@ from core.carbon_api import CarbonAPI
 st.set_page_config(
     page_title="CarbonML · Simulation Lab",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -61,7 +61,7 @@ html, body, .stApp {
     color: #f1f5f9; letter-spacing: -0.02em;
     margin: 0 0 6px;
 }
-.page-header p { font-size: 13px; color: #475569; margin: 0 0 24px; }
+.page-header p { font-size: 13px; color: #94a3b8; margin: 0 0 24px; }
 
 /* ── EXPERIMENT RESULT CARDS ── */
 .exp-card {
@@ -88,7 +88,7 @@ html, body, .stApp {
     letter-spacing: -0.02em;
     margin-bottom: 4px;
 }
-.exp-unit { font-size: 11px; color: #334155; margin-bottom: 14px; }
+.exp-unit { font-size: 11px; color: #cbd5e1; margin-bottom: 14px; }
 .exp-badge {
     display: inline-block;
     font-family: 'IBM Plex Mono', monospace;

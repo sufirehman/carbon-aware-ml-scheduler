@@ -12,7 +12,7 @@ from core.carbon_api import CarbonAPI
 st.set_page_config(
     page_title="CarbonML · Forecast",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -52,7 +52,7 @@ html, body, .stApp {
     color: #f1f5f9; letter-spacing: -0.02em;
     margin: 0 0 6px;
 }
-.page-header p { font-size: 13px; color: #475569; margin: 0 0 24px; }
+.page-header p { font-size: 13px; color: #94a3b8; margin: 0 0 24px; }
 
 /* ── STAT CARDS ── */
 .stat-card {
@@ -78,7 +78,7 @@ html, body, .stApp {
     color: #f1f5f9; letter-spacing: -0.02em;
     margin-bottom: 4px;
 }
-.stat-unit { font-size: 11px; color: #334155; }
+.stat-unit { font-size: 11px; color: #cbd5e1; }
 
 /* ── CHART CARD ── */
 .chart-card {
@@ -94,7 +94,7 @@ html, body, .stApp {
     letter-spacing: 0.08em; text-transform: uppercase;
     margin-bottom: 4px;
 }
-.chart-sub { font-size: 12px; color: #334155; margin-bottom: 16px; }
+.chart-sub { font-size: 12px; color: #cbd5e1; margin-bottom: 16px; }
 
 /* ── LEGEND ── */
 .legend {

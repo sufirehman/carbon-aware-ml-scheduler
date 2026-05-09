@@ -15,7 +15,7 @@ from core.report_generator import generate_report
 st.set_page_config(
     page_title="CarbonML · Dashboard",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -106,7 +106,7 @@ html, body, .stApp {
     color: #f1f5f9; letter-spacing: -0.02em;
     margin-bottom: 4px;
 }
-.kpi-sub { font-size: 11px; color: #334155; }
+.kpi-sub { font-size: 11px; color: #cbd5e1; }
 
 /* ── CHART CARDS ── */
 .chart-card {

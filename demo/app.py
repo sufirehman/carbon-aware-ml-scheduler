@@ -236,7 +236,7 @@ html, body, [class*="css"] {
     padding:26px 40px;
     display:flex;
     justify-content:space-between;
-    color:#475569;
+    color:#94a3b8;
     font-size:12px;
 }
 
