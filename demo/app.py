@@ -305,11 +305,11 @@ with col_c:
     b1, b2 = st.columns(2)
     with b1:
         if st.button("⟶ Launch Dashboard", type="primary", use_container_width=True):
-            st.toast("Dashboard Loading...")
+            # st.toast("Dashboard Loading...")
             st.page_link("pages/overview.py", label="⟶ Launch Dashboard", icon="")
     with b2:
         if st.button("Run Simulation Lab", type="secondary", use_container_width=True):
-            st.toast("Simulation Initializing...")
+            # st.toast("Simulation Initializing...")
             st.page_link("pages/simulation.py", label="Run Simulation Lab", icon="🧪")
 
 # =========================
