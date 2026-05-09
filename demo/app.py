@@ -6,16 +6,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ─────────────────────────────────────────────────────────────
-# CSS
-# ─────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body, .stApp {
     background: #080d12 !important;
@@ -23,15 +18,9 @@ html, body, .stApp {
     color: #e2e8f0;
 }
 
-/* Hide Streamlit chrome properly */
-#MainMenu,
-footer {
-    visibility: hidden;
-}
-
-header[data-testid="stHeader"] {
-    display: none;
-}
+/* Hide Streamlit chrome */
+#MainMenu, footer { visibility: hidden; }
+header[data-testid="stHeader"] { display: none; }
 
 .block-container {
     padding: 0 !important;
@@ -51,9 +40,7 @@ header[data-testid="stHeader"] {
     z-index: 0;
 }
 
-/* ─────────────────────────────────────────────
-   TICKER
-───────────────────────────────────────────── */
+/* ── TICKER ── */
 .ticker-wrap {
     background: #0e1520;
     border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -71,7 +58,7 @@ header[data-testid="stHeader"] {
 }
 
 @keyframes ticker {
-    0%   { transform: translateX(0); }
+    0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
 
@@ -105,9 +92,7 @@ header[data-testid="stHeader"] {
     color: #1e293b;
 }
 
-/* ─────────────────────────────────────────────
-   NAVBAR
-───────────────────────────────────────────── */
+/* ── NAV ── */
 .topnav {
     display: flex;
     align-items: center;
@@ -115,7 +100,6 @@ header[data-testid="stHeader"] {
     padding: 16px 40px;
     border-bottom: 1px solid rgba(255,255,255,0.07);
     background: rgba(8,13,18,0.95);
-    backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -144,7 +128,7 @@ header[data-testid="stHeader"] {
 
 @keyframes blink {
     0%,100% { opacity: 1; }
-    50%     { opacity: 0.5; }
+    50% { opacity: 0.5; }
 }
 
 .live-badge {
@@ -160,13 +144,11 @@ header[data-testid="stHeader"] {
     gap: 7px;
 }
 
-/* ─────────────────────────────────────────────
-   HERO
-───────────────────────────────────────────── */
+/* ── HERO ── */
 .hero {
     max-width: 860px;
     margin: 0 auto;
-    padding: 90px 32px 56px;
+    padding: 80px 32px 56px;
     text-align: center;
     position: relative;
     z-index: 2;
@@ -189,12 +171,12 @@ header[data-testid="stHeader"] {
 }
 
 .hero h1 {
-    font-size: 58px;
+    font-size: 52px;
     font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
     color: #f1f5f9;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .hero h1 em {
@@ -207,19 +189,16 @@ header[data-testid="stHeader"] {
     color: #64748b;
     line-height: 1.7;
     font-weight: 300;
-    max-width: 650px;
+    max-width: 600px;
     margin: 0 auto 44px;
 }
 
-/* ─────────────────────────────────────────────
-   IMPACT STRIP
-───────────────────────────────────────────── */
+/* ── IMPACT STRIP ── */
 .impact-strip {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border-top: 1px solid rgba(255,255,255,0.07);
     border-bottom: 1px solid rgba(255,255,255,0.07);
-    margin-top: 40px;
 }
 
 .impact-cell {
@@ -247,13 +226,11 @@ header[data-testid="stHeader"] {
     line-height: 1.5;
 }
 
-/* ─────────────────────────────────────────────
-   SECTIONS
-───────────────────────────────────────────── */
+/* ── MODULES ── */
 .section {
-    max-width: 1100px;
+    max-width: 1060px;
     margin: 0 auto;
-    padding: 72px 32px;
+    padding: 64px 32px;
 }
 
 .section-eyebrow {
@@ -277,10 +254,11 @@ header[data-testid="stHeader"] {
 }
 
 .section h2 {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 600;
     color: #f1f5f9;
-    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
 }
 
 .section-sub {
@@ -289,29 +267,26 @@ header[data-testid="stHeader"] {
     margin-bottom: 36px;
 }
 
-/* ─────────────────────────────────────────────
-   MODULES
-───────────────────────────────────────────── */
 .modules-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 16px;
 }
 
 .module-card {
     background: #0e1520;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 28px;
-    transition: all 0.25s ease;
     position: relative;
     overflow: hidden;
+    transition: all 0.25s;
 }
 
 .module-card:hover {
-    transform: translateY(-4px);
     border-color: rgba(34,197,94,0.2);
-    background: #121c29;
+    background: #141f2e;
+    transform: translateY(-2px);
 }
 
 .module-card::before {
@@ -323,7 +298,7 @@ header[data-testid="stHeader"] {
     height: 2px;
     background: linear-gradient(90deg, #22c55e, transparent);
     opacity: 0;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.25s;
 }
 
 .module-card:hover::before {
@@ -331,16 +306,16 @@ header[data-testid="stHeader"] {
 }
 
 .module-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
+    width: 40px;
+    height: 40px;
     background: rgba(34,197,94,0.1);
     border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 18px;
     font-size: 18px;
+    margin-bottom: 18px;
 }
 
 .module-title {
@@ -352,8 +327,8 @@ header[data-testid="stHeader"] {
 
 .module-desc {
     font-size: 13px;
-    color: #64748b;
-    line-height: 1.7;
+    color: #475569;
+    line-height: 1.65;
     margin-bottom: 18px;
 }
 
@@ -361,68 +336,10 @@ header[data-testid="stHeader"] {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     color: #22c55e;
-    letter-spacing: 0.05em;
-}
-
-/* ─────────────────────────────────────────────
-   RESEARCH
-───────────────────────────────────────────── */
-.research-grid {
-    display: grid;
-    grid-template-columns: 1fr 1px 1fr;
-    gap: 40px;
-    align-items: start;
-    background: #0e1520;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    padding: 40px;
-    margin-top: 16px;
-}
-
-.v-divider {
-    background: rgba(255,255,255,0.07);
-}
-
-.research-col h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #f1f5f9;
-    margin-bottom: 14px;
-}
-
-.research-col p {
-    font-size: 13px;
-    color: #64748b;
-    line-height: 1.8;
-    margin-bottom: 12px;
-}
-
-.research-col strong {
-    color: #cbd5e1;
-}
-
-.pills {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 18px;
-}
-
-.pill {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: #22c55e;
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.2);
-    padding: 4px 10px;
-    border-radius: 4px;
     letter-spacing: 0.06em;
-    text-transform: uppercase;
 }
 
-/* ─────────────────────────────────────────────
-   FOOTER
-───────────────────────────────────────────── */
+/* ── FOOTER ── */
 .site-footer {
     border-top: 1px solid rgba(255,255,255,0.07);
     padding: 28px 40px;
@@ -450,17 +367,15 @@ header[data-testid="stHeader"] {
     text-transform: uppercase;
 }
 
-/* ─────────────────────────────────────────────
-   BUTTONS
-───────────────────────────────────────────── */
+/* Streamlit buttons */
 div.stButton > button {
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 13px !important;
     font-weight: 600 !important;
     letter-spacing: 0.04em !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     transition: all 0.2s !important;
-    padding: 12px 24px !important;
+    padding: 10px 24px !important;
 }
 
 div.stButton > button[kind="primary"] {
@@ -485,51 +400,19 @@ div.stButton > button[kind="secondary"]:hover {
     border-color: rgba(255,255,255,0.2) !important;
     background: rgba(255,255,255,0.04) !important;
 }
-
-/* ─────────────────────────────────────────────
-   RESPONSIVE
-───────────────────────────────────────────── */
-@media (max-width: 900px) {
-
-    .hero h1 {
-        font-size: 40px;
-    }
-
-    .modules-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .research-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .v-divider {
-        display: none;
-    }
-
-    .impact-strip {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .site-footer {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-    }
-}
 </style>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # TICKER
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 ticker_items = [
     ("CARBON INTENSITY", "178 gCO₂/kWh", "▼ 12%", "up"),
     ("WIND GENERATION", "32.4 GW", "▲ 4.1%", "up"),
     ("SOLAR OUTPUT", "7.1 GW", "▲ 2.2%", "up"),
     ("GRID DEMAND", "38.2 GW", "▼ 1.0%", "dn"),
     ("COAL CAPACITY", "0 GW", "NET ZERO", "up"),
-    ("FORECAST ACCURACY", "94.2%", "", "")
+    ("FORECAST ACCURACY", "94.2%", "", ""),
 ]
 
 ticker_html = '<div class="ticker-inner">'
@@ -542,16 +425,14 @@ for label, val, delta, direction in ticker_items * 2:
         else "t-val"
     )
 
-    delta_html = f'<span class="{cls}">{delta}</span>' if delta else ''
-
-    ticker_html += f"""
+    ticker_html += f'''
     <div class="ticker-item">
         <span class="t-label">{label}</span>
         <span class="t-val">{val}</span>
-        {delta_html}
+        {f'<span class="{cls}">{delta}</span>' if delta else ''}
         <span class="t-sep">·</span>
     </div>
-    """
+    '''
 
 ticker_html += '</div>'
 
@@ -560,9 +441,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ─────────────────────────────────────────────────────────────
-# NAVBAR
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# NAV
+# ─────────────────────────────────────────────
 st.markdown("""
 <div class="topnav">
     <div class="logo">
@@ -577,11 +458,12 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # HERO
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 st.markdown("""
 <div class="hero">
+
     <div class="hero-tag">
         <span class="logo-dot"></span>
         UK Net Zero 2050 Infrastructure
@@ -595,15 +477,16 @@ st.markdown("""
     <p class="hero-sub">
         The UK's first carbon-aware ML scheduling platform.
         Combines real-time National Grid carbon forecasting
-        with reinforcement learning to cut AI training emissions
-        by up to 70%.
+        with reinforcement learning to cut AI training
+        emissions by up to 70%.
     </p>
+
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # BUTTONS
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 col_l, col_c, col_r = st.columns([1, 2, 1])
 
 with col_c:
@@ -626,9 +509,9 @@ with col_c:
         ):
             st.switch_page("pages/simulation.py")
 
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # IMPACT STRIP
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 st.markdown("""
 <div class="impact-strip">
 
@@ -663,9 +546,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # MODULES
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 st.markdown("""
 <div class="section">
 
@@ -692,10 +575,8 @@ st.markdown("""
             </div>
 
             <div class="module-desc">
-                Identifies optimal low-carbon execution windows
-                using 24-hour National Grid forecasting.
-                Shifts ML workloads into green energy valleys
-                without impacting SLAs.
+                Identifies optimal low-carbon execution
+                windows using 24-hour National Grid forecasting.
             </div>
 
             <div class="module-cta">
@@ -712,9 +593,7 @@ st.markdown("""
 
             <div class="module-desc">
                 Real-time integration with National Grid ESO
-                carbon intensity data. Forecast accuracy
-                exceeding 94% at 30-minute resolution
-                across all UK regions.
+                carbon intensity data.
             </div>
 
             <div class="module-cta">
@@ -732,7 +611,6 @@ st.markdown("""
             <div class="module-desc">
                 Reinforcement learning agent learns optimal
                 execution timing under carbon uncertainty.
-                Benchmarked against baseline schedulers.
             </div>
 
             <div class="module-cta">
@@ -744,84 +622,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────────────────────
-# RESEARCH
-# ─────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="section" style="padding-top:0">
-
-    <div class="section-eyebrow">
-        Research Contribution
-    </div>
-
-    <h2>
-        Bridging industrial and individual ML operations
-    </h2>
-
-    <div class="research-grid">
-
-        <div class="research-col">
-
-            <h3>The Problem</h3>
-
-            <p>
-                Large tech companies like
-                <strong>Google and Meta</strong>
-                already use carbon-aware scheduling internally.
-                But this infrastructure is unavailable to
-                independent researchers, startups,
-                and university labs.
-            </p>
-
-            <p>
-                Without access to grid carbon data or
-                scheduling intelligence, these organisations
-                have <strong>no mechanism to reduce
-                training-time emissions.</strong>
-            </p>
-
-            <div class="pills">
-                <span class="pill">Novel Framework</span>
-                <span class="pill">Open Research</span>
-                <span class="pill">UK Grid Data</span>
-            </div>
-
-        </div>
-
-        <div class="v-divider"></div>
-
-        <div class="research-col">
-
-            <h3>Our Solution</h3>
-
-            <p>
-                A <strong>lightweight RL-enhanced carbon
-                optimisation layer</strong> that runs on any
-                ML workflow with no infrastructure changes.
-            </p>
-
-            <p>
-                Validated against real UK National Grid
-                carbon intensity data, achieving
-                <strong>18–70% emissions reductions</strong>
-                depending on workload urgency.
-            </p>
-
-            <div class="pills">
-                <span class="pill">RL Agent</span>
-                <span class="pill">18–70% Savings</span>
-                <span class="pill">Production Ready</span>
-            </div>
-
-        </div>
-
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # FOOTER
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
 st.markdown("""
 <div class="site-footer">
 
