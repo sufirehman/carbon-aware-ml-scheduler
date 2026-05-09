@@ -299,18 +299,16 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Buttons
+# =========================
+# BUTTONS (FIXED & SIZED)
+# =========================
 col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
     b1, b2 = st.columns(2)
     with b1:
-        if st.button("⟶ Launch Dashboard", type="primary", use_container_width=True):
-            # st.toast("Dashboard Loading...")
-            st.page_link("pages/overview.py", label="⟶ Launch Dashboard", icon="")
+        st.page_link("pages/overview.py", label="⟶ Launch Dashboard")
     with b2:
-        if st.button("Run Simulation Lab", type="secondary", use_container_width=True):
-            # st.toast("Simulation Initializing...")
-            st.page_link("pages/simulation.py", label="Run Simulation Lab", icon="🧪")
+        st.page_link("pages/simulation.py", label="Run Simulation Lab")
 
 # =========================
 # IMPACT STRIP
