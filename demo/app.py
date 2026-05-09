@@ -299,16 +299,17 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Buttons
+# =========================
+# HERO SECTION BUTTONS (FIXED)
+# =========================
 col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
     b1, b2 = st.columns(2)
     with b1:
-        if st.button("⟶ Launch Dashboard", type="primary", use_container_width=True):
-            st.toast("Dashboard Loading...")
+        # This is the official way to link pages in 2026
+        st.page_link("pages/overview.py", label="⟶ Launch Dashboard", icon="🚀")
     with b2:
-        if st.button("Run Simulation Lab", type="secondary", use_container_width=True):
-            st.toast("Simulation Initializing...")
+        st.page_link("pages/simulation.py", label="Run Simulation Lab", icon="🧪")
 
 # =========================
 # IMPACT STRIP
@@ -335,32 +336,35 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================
-# MODULES SECTION
+# MODULES SECTION (FIXED & CLICKABLE)
 # =========================
 st.markdown("""
 <div class="section">
     <div class="section-eyebrow">Platform Modules</div>
-    <h2>Everything your ML team needs to go carbon-zero</h2>
-    <p class="section-sub">Three integrated systems working in real time across the UK national grid</p>
-    <div class="modules-grid">
-        <div class="module-card">
-            <div style="font-size:24px; margin-bottom:15px;">⚡</div>
-            <div class="module-title">Carbon Scheduler</div>
-            <div class="module-desc">Identifies optimal low-carbon execution windows using 24-hour National Grid forecasting.</div>
-        </div>
-        <div class="module-card">
-            <div style="font-size:24px; margin-bottom:15px;">📡</div>
-            <div class="module-title">Carbon Intelligence API</div>
-            <div class="module-desc">Real-time integration with National Grid ESO carbon data with 94%+ forecast accuracy.</div>
-        </div>
-        <div class="module-card">
-            <div style="font-size:24px; margin-bottom:15px;">🤖</div>
-            <div class="module-title">RL Simulation Lab</div>
-            <div class="module-desc">Reinforcement learning agent learns optimal execution timing under carbon uncertainty.</div>
-        </div>
-    </div>
+    <h2>Everything your ML team needs</h2>
+    <div class="section-sub">Click a module below to enter the system.</div>
 </div>
 """, unsafe_allow_html=True)
+
+m1, m2, m3 = st.columns(3)
+
+with m1:
+    with st.container(border=True):
+        st.markdown("### ⚡ Carbon Scheduler")
+        st.write("Identifies optimal low-carbon execution windows using 24-hour forecasting.")
+        st.page_link("pages/overview.py", label="Open Scheduler")
+
+with m2:
+    with st.container(border=True):
+        st.markdown("### 📡 Intelligence API")
+        st.write("Real-time integration with National Grid ESO carbon data.")
+        st.page_link("pages/overview.py", label="View API Data") # Or a dedicated API page
+
+with m3:
+    with st.container(border=True):
+        st.markdown("### 🤖 Simulation Lab")
+        st.write("Reinforcement learning agent learns optimal timing under uncertainty.")
+        st.page_link("pages/simulation.py", label="Run Lab")
 
 # =========================
 # RESEARCH CONTRIBUTION
