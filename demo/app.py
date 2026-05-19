@@ -315,7 +315,7 @@ with col_c:
     
     with b2:
         if st.button("Run Simulation Lab", 
-                    type="secondary", 
+                    type="primary", 
                     use_container_width=True,
                     key="sim_btn"):
             st.switch_page("pages/simulation.py")
