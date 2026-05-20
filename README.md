@@ -1,7 +1,8 @@
 # 🌍 Carbon-Aware ML Training Controller — CAML-TC
 
 [![PyPI version](https://badge.fury.io/py/caml-tc.svg)](https://badge.fury.io/py/caml-tc)
-![Downloads](https://img.shields.io/pypi/dm/caml-tc)
+![PyPI version](https://img.shields.io/pypi/v/caml-tc)
+![PyPI downloads](https://img.shields.io/pypi/dm/caml-tc)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)](https://pypi.org/project/caml-tc)
 [![Streamlit](https://img.shields.io/badge/Live%20App-Streamlit-red?logo=streamlit)](https://carbon-aware-ml-scheduler-ilmd5zrsv44sc6ub3vhbtu.streamlit.app/)
