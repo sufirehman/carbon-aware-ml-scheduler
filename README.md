@@ -243,7 +243,7 @@ If you use CAML-TC in your work, please cite:
 @inproceedings{rehman2026camltc,
   title     = {Adaptive Carbon-Aware Machine Learning Training under Uncertainty:
                A Unified Scheduling Framework},
-  author    = {Rehman, Sufiyan Ul and Fatima, Areej and Shahid, Zohaib and Iqbal, Nasir},
+  author    = {Rehman, Sufiyan Ul},
   booktitle = {2026 IEEE International Conference on Environment and
                Electrical Engineering (EEEIC)},
   year      = {2026},
