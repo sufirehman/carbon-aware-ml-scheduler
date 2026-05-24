@@ -3,8 +3,8 @@ import os
 # Add the parent directory (Carbon-Aware-MLOps) to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from camltc.carbon_api import CarbonAPI
-from camltc.scheduler import CarbonScheduler
+from core.carbon_api import CarbonAPI
+from core.scheduler import CarbonScheduler
 from core.simulator import MLTrainingSimulator
 
 api = CarbonAPI()

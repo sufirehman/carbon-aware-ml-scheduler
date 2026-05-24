@@ -16,7 +16,7 @@ except ImportError:
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from camltc.carbon_api import CarbonAPI
+from core.carbon_api import CarbonAPI
 
 st.set_page_config(
     page_title="CarbonML · Simulation Lab",
