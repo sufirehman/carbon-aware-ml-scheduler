@@ -7,7 +7,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 
-from core.carbon_api import CarbonAPI
+from camltc.carbon_api import CarbonAPI
 
 st.set_page_config(
     page_title="CarbonML · Forecast",
