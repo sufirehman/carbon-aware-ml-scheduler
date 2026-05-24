@@ -6,3 +6,4 @@ matplotlib
 requests
 reportlab
 codecarbon
+caml-tc==0.1.8
