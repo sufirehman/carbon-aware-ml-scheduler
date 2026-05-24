@@ -28,8 +28,8 @@ _ROOT = os.path.dirname(_HERE)
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-from core.carbon_api import CarbonAPI
-from core.scheduler import CarbonScheduler as _CoreScheduler
+from camltc.carbon_api import CarbonAPI
+from camltc.scheduler import CarbonScheduler as _CoreScheduler
 from core.rl_agent import RLScheduler as _CoreRL
 
 

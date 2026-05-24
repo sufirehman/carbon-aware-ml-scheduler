@@ -7,8 +7,8 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 
-from core.carbon_api import CarbonAPI
-from core.scheduler import CarbonScheduler
+from camltc.carbon_api import CarbonAPI
+from camltc.scheduler import CarbonScheduler
 from core.simulator import MLTrainingSimulator
 from core.report_generator import generate_report
 
