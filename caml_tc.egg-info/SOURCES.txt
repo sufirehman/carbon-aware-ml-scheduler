@@ -6,11 +6,10 @@ caml_tc.egg-info/SOURCES.txt
 caml_tc.egg-info/dependency_links.txt
 caml_tc.egg-info/requires.txt
 caml_tc.egg-info/top_level.txt
-camltc/camltc__init__.py
-core/__init__.py
-core/carbon_api.py
+camltc/__init__.py
+camltc/carbon_api.py
+camltc/rl_agent.py
+camltc/scheduler.py
 core/experiment.py
 core/report_generator.py
-core/rl_agent.py
-core/scheduler.py
 core/simulator.py

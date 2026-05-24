@@ -47,4 +47,5 @@ class CarbonAPI:
         now = pd.Timestamp.utcnow()
         next_24h = df[df["from"] <= now + pd.Timedelta(hours=24)]
 
+        # REMOVE OR COMMENT OUT THE RENAME LINE HERE
         return next_24h.reset_index(drop=True)

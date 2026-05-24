@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: caml-tc
-Version: 0.1.1
+Version: 0.1.8
 Summary: Carbon-Aware Machine Learning Training Controller
 Author-email: Sufiyan Ul Rehman <s.rehman@ulster.ac.uk>
 License-Expression: MIT

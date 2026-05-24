@@ -25,7 +25,7 @@ def run_baseline(train_function):
 # 2. HEURISTIC SCHEDULER
 # -------------------------------
 def run_with_heuristic(df, train_function):
-    from core.scheduler import CarbonScheduler   # 🔥 moved here
+    from camltc.scheduler import CarbonScheduler   # 🔥 moved here
 
     print("\nRunning with heuristic scheduler...")
 
@@ -49,7 +49,7 @@ def run_with_heuristic(df, train_function):
 # 3. RL SCHEDULER (IMPROVED)
 # -------------------------------
 def run_with_rl(df, train_function):
-    from core.rl_agent import RLScheduler
+    from camltc.rl_agent import RLScheduler
 
     print("\nRunning with RL scheduler (risk-aware)...")
 
