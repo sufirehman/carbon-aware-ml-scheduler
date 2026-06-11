@@ -299,54 +299,62 @@ col_l, col_r = st.columns(2)
 with col_l:
     badge_classes = ["b-best", "b-good", "b-ok"]
     badge_labels  = ["BEST", "GOOD", "OK"]
-    
-    windows_html = ""
-    for i, w in enumerate(windows):
-        bc  = badge_classes[i] if i < len(badge_classes) else "b-ok"
-        bl  = badge_labels[i]  if i < len(badge_labels)  else "OK"
-        col = "#22c55e" if i == 0 else ("#f59e0b" if i == 1 else "#475569")
-        saving = ((avg - w["avg"]) / avg * 100) if avg > 0 else 0
-        windows_html += f"""
-        <div class="win-item">
-            <div>
-                <div class="win-time" style="color:{col}">
-                    {w['start'].strftime('%H:%M')} – {w['end'].strftime('%H:%M')}
-                </div>
-                <div class="win-avg">
-                    Avg {w['avg']:.0f} gCO₂/kWh · {w['duration_h']:.1f}h window ·
-                    ~{max(saving, 0):.0f}% below average
-                </div>
-            </div>
-            <div class="win-badge {bc}">{bl}</div>
-        </div>"""
 
-    st.markdown(f"""
-    <div class="chart-card">
-        <div class="chart-title">Optimal Scheduling Windows</div>
-        <div class="chart-sub">Derived from today's live forecast data</div>
-        {windows_html}
-    </div>
-    """, unsafe_allow_html=True)
+    win_items = []
+    for i, w in enumerate(windows):
+        bc     = badge_classes[i] if i < len(badge_classes) else "b-ok"
+        bl     = badge_labels[i]  if i < len(badge_labels)  else "OK"
+        color  = "#22c55e" if i == 0 else ("#f59e0b" if i == 1 else "#475569")
+        saving = ((avg - w["avg"]) / avg * 100) if avg > 0 else 0
+        t_start = w["start"].strftime("%H:%M")
+        t_end   = w["end"].strftime("%H:%M")
+        avg_ci  = f"{w['avg']:.0f}"
+        dur     = f"{w['duration_h']:.1f}"
+        sav_pct = f"{max(saving, 0):.0f}"
+        win_items.append(
+            '<div class="win-item">'
+            '<div>'
+            f'<div class="win-time" style="color:{color}">{t_start} &ndash; {t_end}</div>'
+            f'<div class="win-avg">Avg {avg_ci} gCO&#8322;/kWh &middot; {dur}h window &middot; ~{sav_pct}% below average</div>'
+            '</div>'
+            f'<div class="win-badge {bc}">{bl}</div>'
+            '</div>'
+        )
+
+    card_html = (
+        '<div class="chart-card">'
+        '<div class="chart-title">Optimal Scheduling Windows</div>'
+        '<div class="chart-sub">Derived from today&#39;s live forecast data</div>'
+        + "".join(win_items) +
+        '</div>'
+    )
+    st.markdown(card_html, unsafe_allow_html=True)
 
 with col_r:
-    max_saving = min(swing_pct, 70)
-    st.markdown(f"""
-    <div class="chart-card">
-        <div class="chart-title">Grid Intelligence Analysis</div>
-        <div class="chart-sub">CAML-TC carbon opportunity score</div>
-        <div class="insight">
-            <div class="ins-lbl">Today's Carbon Opportunity</div>
-            The UK grid shows <strong style="color:#94a3b8">±{vol:.0f} gCO₂/kWh</strong> volatility
-            today — a <strong style="color:#22c55e">{swing_pct:.0f}%</strong> peak-to-low swing
-            across 24 hours. This is the window of opportunity CAML-TC exploits.<br><br>
-            <strong style="color:#94a3b8">Recommended action:</strong> Schedule GPU training
-            starting <strong style="color:#22c55e">{low_time.strftime('%H:%M')}</strong> for
-            maximum carbon efficiency. Expected saving vs immediate execution:
-            up to <strong style="color:#22c55e">{max_saving:.0f}%</strong>.<br><br>
-            <strong style="color:#94a3b8">Strategy:</strong> {"RL agent engaged — high grid volatility detected." if vol > 30 else "Heuristic scheduler sufficient — moderate grid volatility."}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    max_saving   = min(swing_pct, 70)
+    vol_str      = f"{vol:.0f}"
+    swing_str    = f"{swing_pct:.0f}"
+    low_time_str = low_time.strftime("%H:%M")
+    max_sav_str  = f"{max_saving:.0f}"
+    strategy_str = "RL agent engaged &mdash; high grid volatility detected." if vol > 30 else "Heuristic scheduler sufficient &mdash; moderate grid volatility."
+
+    insight_html = (
+        '<div class="chart-card">'
+        '<div class="chart-title">Grid Intelligence Analysis</div>'
+        '<div class="chart-sub">CAML-TC carbon opportunity score</div>'
+        '<div class="insight">'
+        '<div class="ins-lbl">Today&#39;s Carbon Opportunity</div>'
+        f'The UK grid shows <strong style="color:#94a3b8">&plusmn;{vol_str} gCO&#8322;/kWh</strong> volatility '
+        f'today &mdash; a <strong style="color:#22c55e">{swing_str}%</strong> peak-to-low swing '
+        'across 24 hours. This is the window of opportunity CAML-TC exploits.<br><br>'
+        f'<strong style="color:#94a3b8">Recommended action:</strong> Schedule GPU training '
+        f'starting <strong style="color:#22c55e">{low_time_str}</strong> for '
+        'maximum carbon efficiency. Expected saving vs immediate execution: '
+        f'up to <strong style="color:#22c55e">{max_sav_str}%</strong>.<br><br>'
+        f'<strong style="color:#94a3b8">Strategy:</strong> {strategy_str}'
+        '</div></div>'
+    )
+    st.markdown(insight_html, unsafe_allow_html=True)
 
 # ── DATA TABS
 st.markdown("<br>", unsafe_allow_html=True)
@@ -380,16 +388,18 @@ with tab2:
     st.dataframe(display, use_container_width=True, height=300)
 
 with tab3:
-    st.markdown("""
-    <div class="insight" style="margin-top:4px;">
-        <div class="ins-lbl">Why temporal carbon variation enables carbon-aware scheduling</div>
-        The UK grid's carbon intensity is highly time-dependent, driven by renewable intermittency
-        (wind and solar), demand peaks (morning and evening), and baseload mix.
-        CAML-TC exploits three temporal properties:<br><br>
-        <strong style="color:#94a3b8">1. Diurnal patterns</strong> — low demand overnight, predictable low-carbon windows<br>
-        <strong style="color:#94a3b8">2. Renewable stochasticity</strong> — wind bursts create short-lived green windows the RL agent learns to identify<br>
-        <strong style="color:#94a3b8">3. Forecast reliability decay</strong> — confidence drops with horizon; CAML-TC weights near-term slots higher via exponential decay <code>wₜ = exp(−λ·Δt)</code><br><br>
-        The larger the daily swing, the greater the potential saving. On high-variability days (σ > 30), the RL agent
-        activates in place of the heuristic — this is when adaptive learning has the most to offer.
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        '<div class="insight" style="margin-top:4px;">'
+        '<div class="ins-lbl">Why temporal carbon variation enables carbon-aware scheduling</div>'
+        'The UK grid&#39;s carbon intensity is highly time-dependent, driven by renewable intermittency '
+        '(wind and solar), demand peaks (morning and evening), and baseload mix. '
+        'CAML-TC exploits three temporal properties:<br><br>'
+        '<strong style="color:#94a3b8">1. Diurnal patterns</strong> &mdash; low demand overnight, predictable low-carbon windows<br>'
+        '<strong style="color:#94a3b8">2. Renewable stochasticity</strong> &mdash; wind bursts create short-lived green windows the RL agent learns to identify<br>'
+        '<strong style="color:#94a3b8">3. Forecast reliability decay</strong> &mdash; confidence drops with horizon; '
+        'CAML-TC weights near-term slots higher via exponential decay <code>w&#8345; = exp(&minus;&lambda;&middot;&Delta;t)</code><br><br>'
+        'The larger the daily swing, the greater the potential saving. On high-variability days (&sigma; &gt; 30), '
+        'the RL agent activates in place of the heuristic &mdash; this is when adaptive learning has the most to offer.'
+        '</div>',
+        unsafe_allow_html=True
+    )
