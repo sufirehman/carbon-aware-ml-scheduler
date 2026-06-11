@@ -1,429 +1,395 @@
-import sys
-import os
-
+import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
 
 from camltc.carbon_api import CarbonAPI
 
 st.set_page_config(
-    page_title="CarbonML · Forecast",
+    page_title="CAML-TC · Forecast",
+    page_icon="📡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 html, body, .stApp {
-    background: #080d12 !important;
+    background: #05090f !important;
     font-family: 'IBM Plex Sans', sans-serif;
-    color: #e2e8f0;
+    color: #cbd5e1;
 }
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding: 2rem 2.5rem !important; max-width: 100% !important; }
 .stApp::before {
-    content: '';
-    position: fixed; inset: 0;
+    content: ''; position: fixed; inset: 0; pointer-events: none;
     background-image:
         linear-gradient(rgba(34,197,94,0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(34,197,94,0.025) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none; z-index: 0;
+    background-size: 52px 52px;
 }
 
-/* ── PAGE HEADER ── */
-.page-badge-blue {
+.page-hdr { margin-bottom: 28px; }
+.page-badge {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; color: #0ea5e9;
-    background: rgba(14,165,233,0.1);
-    border: 1px solid rgba(14,165,233,0.25);
-    padding: 4px 12px; border-radius: 6px;
-    letter-spacing: 0.08em; text-transform: uppercase;
+    font-size: 10px; color: #0ea5e9;
+    background: rgba(14,165,233,0.08);
+    border: 1px solid rgba(14,165,233,0.2);
+    padding: 4px 14px; border-radius: 6px;
+    letter-spacing: 0.1em; text-transform: uppercase;
     display: inline-block; margin-bottom: 10px;
 }
-.page-header h1 {
-    font-size: 26px; font-weight: 700;
-    color: #f1f5f9; letter-spacing: -0.02em;
-    margin: 0 0 6px;
-}
-.page-header p { font-size: 13px; color: #94a3b8; margin: 0 0 24px; }
+.page-hdr h1 { font-size: 26px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.02em; margin: 0 0 6px; }
+.page-hdr p  { font-size: 13px; color: #475569; margin: 0; }
 
 /* ── STAT CARDS ── */
-.stat-card {
-    background: #0e1520;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-left: 2px solid transparent;
-    border-radius: 10px;
-    padding: 18px 20px;
-}
-.stat-red   { border-left-color: #ef4444 !important; }
-.stat-green { border-left-color: #22c55e !important; }
-.stat-blue  { border-left-color: #0ea5e9 !important; }
-.stat-amber { border-left-color: #f59e0b !important; }
-.stat-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; color: #475569;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    margin-bottom: 6px;
-}
-.stat-val {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 26px; font-weight: 600;
-    color: #f1f5f9; letter-spacing: -0.02em;
-    margin-bottom: 4px;
-}
-.stat-unit { font-size: 11px; color: #cbd5e1; }
+.stat { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-left: 2px solid transparent; border-radius: 10px; padding: 18px 20px; }
+.stat-r { border-left-color: #ef4444 !important; }
+.stat-g { border-left-color: #22c55e !important; }
+.stat-b { border-left-color: #0ea5e9 !important; }
+.stat-a { border-left-color: #f59e0b !important; }
+.stat-lbl { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#334155; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+.stat-val { font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:600; color:#f1f5f9; letter-spacing:-0.02em; margin-bottom:4px; }
+.stat-sub { font-size:11px; color:#475569; }
 
 /* ── CHART CARD ── */
-.chart-card {
-    background: #0e1520;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
+.chart-card { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+.chart-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.1em; margin-bottom: 4px; }
+.chart-sub { font-size: 12px; color: #94a3b8; margin-bottom: 14px; }
+
+/* ── WINDOW LIST ── */
+.win-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-.chart-title {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px; color: #64748b;
+.win-item:last-child { border-bottom: none; }
+.win-time { font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:500; }
+.win-avg  { font-size:11px; color:#475569; margin-top:3px; }
+.win-badge {
+    font-family:'IBM Plex Mono',monospace; font-size:10px;
+    padding: 4px 12px; border-radius: 4px;
     letter-spacing: 0.08em; text-transform: uppercase;
-    margin-bottom: 4px;
 }
-.chart-sub { font-size: 12px; color: #cbd5e1; margin-bottom: 16px; }
+.b-best { color:#22c55e; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); }
+.b-good { color:#f59e0b; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); }
+.b-ok   { color:#475569; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); }
 
-/* ── LEGEND ── */
-.legend {
-    display: flex; gap: 20px; flex-wrap: wrap;
-    margin-bottom: 16px;
+/* ── INSIGHT ── */
+.insight {
+    background: rgba(34,197,94,0.03);
+    border: 1px solid rgba(34,197,94,0.1);
+    border-radius: 8px; padding: 20px;
+    font-size: 13px; color: #64748b; line-height: 1.8;
 }
-.legend-item {
-    display: flex; align-items: center; gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; color: #475569;
-}
-.legend-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    display: inline-block;
-}
-
-/* ── WINDOW CARDS ── */
-.window-card {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.window-card:last-child { border-bottom: none; }
-.window-time {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px; font-weight: 500;
-}
-.window-meta { font-size: 11px; color: #475569; margin-top: 3px; }
-.window-badge {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; padding: 4px 10px;
-    border-radius: 4px; letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-.badge-best  { color: #22c55e; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
-.badge-good  { color: #f59e0b; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
-.badge-ok    { color: #64748b; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
-
-/* ── INSIGHT BOX ── */
-.insight-box {
-    background: rgba(34,197,94,0.04);
-    border: 1px solid rgba(34,197,94,0.12);
-    border-radius: 8px;
-    padding: 18px;
-    font-size: 13px; color: #64748b;
-    line-height: 1.75;
-}
-.insight-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; color: #22c55e;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 10px;
+.ins-lbl {
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px; color:#22c55e;
+    text-transform:uppercase; letter-spacing:0.12em;
+    margin-bottom:10px;
 }
 
 /* ── TABS ── */
 .stTabs [data-baseweb="tab-list"] {
-    background: #0e1520 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+    background: #0b1520 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
     gap: 4px;
 }
 .stTabs [data-baseweb="tab"] {
     font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 11px !important; color: #475569 !important;
-    letter-spacing: 0.06em !important; text-transform: uppercase !important;
+    font-size: 11px !important; color: #334155 !important;
+    letter-spacing: 0.07em !important; text-transform: uppercase !important;
     background: transparent !important;
-    border-radius: 6px 6px 0 0 !important;
 }
 .stTabs [aria-selected="true"] {
     color: #22c55e !important;
     border-bottom: 2px solid #22c55e !important;
 }
 .stTabs [data-baseweb="tab-panel"] {
-    background: #0e1520 !important;
-    border: 1px solid rgba(255,255,255,0.07) !important;
-    border-top: none !important;
-    border-radius: 0 0 12px 12px !important;
+    background: #0b1520 !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    border-top: none !important; border-radius: 0 0 10px 10px !important;
     padding: 20px !important;
 }
 
+/* ── SIDEBAR ── */
+section[data-testid="stSidebar"] {
+    background: #08111c !important;
+    border-right: 1px solid rgba(255,255,255,0.06) !important;
+}
+section[data-testid="stSidebar"] * { color: #64748b !important; }
+
 /* Plotly */
 .js-plotly-plot .plotly .bg { fill: transparent !important; }
-
 /* Dataframe */
-.dataframe { background: transparent !important; }
-.dataframe th {
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 11px !important; color: #475569 !important;
-    background: #060b10 !important;
-    text-transform: uppercase; letter-spacing: 0.06em;
-}
-.dataframe td {
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 12px !important; color: #94a3b8 !important;
-    background: transparent !important;
-}
+div[data-testid="stDataFrame"] { background: transparent !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── PAGE HEADER
+# ── HEADER
 st.markdown("""
-<div class="page-header">
-    <div class="page-badge-blue">FORECAST</div>
-    <h1>Carbon Intelligence Forecast System</h1>
-    <p>Real-time UK grid carbon prediction for intelligent ML scheduling · National Grid ESO · 30-min resolution</p>
+<div class="page-hdr">
+    <div class="page-badge">Forecast</div>
+    <h1>Carbon Intensity Forecast System</h1>
+    <p>Real-time 24-hour UK grid carbon prediction · National Grid ESO · 30-min resolution · uncertainty-weighted</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ── LOAD DATA
-with st.spinner("Loading carbon forecast data..."):
+with st.spinner("Querying National Grid ESO..."):
     api = CarbonAPI()
     df = api.get_24h_forecast()
     df["carbon"] = df["actual"].fillna(df["forecast"])
     df["from"] = pd.to_datetime(df["from"])
+    df["confidence"] = df["actual"].notna().map({True: "Actual", False: "Forecast"})
 
 # ── ANALYTICS
 peak      = df["carbon"].max()
 low       = df["carbon"].min()
 avg       = df["carbon"].mean()
-volatility = df["carbon"].std()
+vol       = df["carbon"].std()
 peak_time = df.loc[df["carbon"].idxmax(), "from"]
 low_time  = df.loc[df["carbon"].idxmin(), "from"]
-best_window  = df.nsmallest(3, "carbon")
-worst_window = df.nlargest(3, "carbon")
+swing_pct = (peak - low) / peak * 100
+
+# derive real scheduling windows from data
+df_sorted = df.nsmallest(6, "carbon")
+window_size = 3  # 3 × 30-min = 1.5 hr windows
+
+# find the top 3 non-overlapping windows of 3 consecutive slots
+def find_windows(df, n=3, size=3):
+    windows = []
+    used = set()
+    sorted_idx = df["carbon"].argsort().values
+    for i in sorted_idx:
+        if i in used:
+            continue
+        # check if we can form a window here
+        if i + size <= len(df):
+            indices = list(range(i, i + size))
+            if not any(j in used for j in indices):
+                w_df = df.iloc[indices]
+                windows.append({
+                    "start": w_df.iloc[0]["from"],
+                    "end": w_df.iloc[-1]["from"] + pd.Timedelta(minutes=30),
+                    "avg": w_df["carbon"].mean(),
+                    "duration_h": size * 0.5,
+                })
+                for j in indices:
+                    used.add(j)
+        if len(windows) == n:
+            break
+    return sorted(windows, key=lambda x: x["avg"])
+
+windows = find_windows(df, n=3, size=3)
 
 # ── STAT CARDS
 s1, s2, s3, s4 = st.columns(4)
 cards = [
-    (s1, "stat-red",   "Peak Carbon",   f"{peak:.0f}", f"gCO₂/kWh · at {peak_time.strftime('%H:%M')}"),
-    (s2, "stat-green", "Lowest Carbon", f"{low:.0f}",  f"gCO₂/kWh · at {low_time.strftime('%H:%M')}"),
-    (s3, "stat-blue",  "24hr Average",  f"{avg:.0f}",  "gCO₂/kWh"),
-    (s4, "stat-amber", "Grid Volatility", f"±{volatility:.0f}", "gCO₂/kWh std deviation"),
+    (s1, "stat stat-r", "Peak Carbon",      f"{peak:.0f}",  f"gCO₂/kWh · {peak_time.strftime('%H:%M')}"),
+    (s2, "stat stat-g", "Lowest Carbon",    f"{low:.0f}",   f"gCO₂/kWh · {low_time.strftime('%H:%M')}"),
+    (s3, "stat stat-b", "24-hr Average",    f"{avg:.0f}",   "gCO₂/kWh"),
+    (s4, "stat stat-a", "Grid Volatility",  f"±{vol:.0f}",  f"σ · {swing_pct:.0f}% peak-to-low swing"),
 ]
-for col, cls, label, val, unit in cards:
+for col, cls, lbl, val, sub in cards:
     with col:
-        st.markdown(f"""
-        <div class="stat-card {cls}">
-            <div class="stat-label">{label}</div>
+        st.markdown(f"""<div class="{cls}">
+            <div class="stat-lbl">{lbl}</div>
             <div class="stat-val">{val}</div>
-            <div class="stat-unit">{unit}</div>
-        </div>
-        """, unsafe_allow_html=True)
+            <div class="stat-sub">{sub}</div>
+        </div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── BIG CHART
+# ── MAIN CHART
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 st.markdown("""
-<div class="chart-card">
-    <div class="chart-title">24-Hour Carbon Intensity Curve</div>
-    <div class="chart-sub">gCO₂/kWh · hover for values</div>
-    <div class="legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span>Low carbon window</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>High carbon window</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#64748b"></span>Carbon intensity</div>
-    </div>
-</div>
+<div class="chart-title">24-Hour Carbon Intensity Curve</div>
+<div class="chart-sub">gCO₂/kWh · hover for exact values · green = low-carbon window · red = peak window</div>
 """, unsafe_allow_html=True)
 
 fig = go.Figure()
 
-# Area fill
+# Colour-encoded line by carbon level
+colors = df["carbon"].apply(
+    lambda v: "#22c55e" if v <= low + (peak - low) * 0.33
+    else ("#f59e0b" if v <= low + (peak - low) * 0.66 else "#ef4444")
+)
+
+# Area base
 fig.add_trace(go.Scatter(
     x=df["from"], y=df["carbon"],
     mode="lines", name="Carbon Intensity",
-    line=dict(color="#64748b", width=2.5),
-    fill="tozeroy",
-    fillcolor="rgba(100,116,139,0.06)",
-    hovertemplate="<b>%{x|%H:%M}</b><br>%{y:.1f} gCO₂/kWh<extra></extra>"
+    line=dict(color="#475569", width=2),
+    fill="tozeroy", fillcolor="rgba(71,85,105,0.04)",
+    hovertemplate="<b>%{x|%H:%M}</b><br>%{y:.1f} gCO₂/kWh<extra></extra>",
+    showlegend=False
 ))
 
-# Green optimal zone
-fig.add_vrect(
-    x0=best_window.iloc[0]["from"],
-    x1=best_window.iloc[-1]["from"],
-    fillcolor="rgba(34,197,94,0.1)", line_width=0,
-    annotation_text="Low Carbon Window",
-    annotation_font_color="#22c55e", annotation_font_size=11
-)
+# Actual vs Forecast distinction
+actual_df   = df[df["confidence"] == "Actual"]
+forecast_df = df[df["confidence"] == "Forecast"]
 
-# Red high-carbon zone
-fig.add_vrect(
-    x0=worst_window.iloc[0]["from"],
-    x1=worst_window.iloc[-1]["from"],
-    fillcolor="rgba(239,68,68,0.07)", line_width=0,
-    annotation_text="High Carbon Window",
-    annotation_font_color="#ef4444", annotation_font_size=11
-)
+if len(actual_df):
+    fig.add_trace(go.Scatter(
+        x=actual_df["from"], y=actual_df["carbon"],
+        mode="lines", name="Actual",
+        line=dict(color="#22c55e", width=2.5),
+        hovertemplate="<b>%{x|%H:%M}</b><br>Actual: %{y:.1f} gCO₂/kWh<extra></extra>"
+    ))
+if len(forecast_df):
+    fig.add_trace(go.Scatter(
+        x=forecast_df["from"], y=forecast_df["carbon"],
+        mode="lines", name="Forecast",
+        line=dict(color="#0ea5e9", width=2, dash="dot"),
+        hovertemplate="<b>%{x|%H:%M}</b><br>Forecast: %{y:.1f} gCO₂/kWh<extra></extra>"
+    ))
+
+# Highlight best window
+if windows:
+    fig.add_vrect(
+        x0=windows[0]["start"], x1=windows[0]["end"],
+        fillcolor="rgba(34,197,94,0.1)", line_color="rgba(34,197,94,0.3)", line_width=1,
+        annotation_text="★ Best Window",
+        annotation_font_color="#22c55e", annotation_font_size=11
+    )
 
 # Peak marker
 fig.add_trace(go.Scatter(
-    x=[peak_time], y=[peak],
-    mode="markers+text",
-    marker=dict(size=10, color="#ef4444", symbol="circle"),
+    x=[peak_time], y=[peak], mode="markers+text",
+    marker=dict(size=10, color="#ef4444", symbol="circle-open", line_width=2),
     text=[f"PEAK {peak:.0f}"],
     textfont=dict(family="IBM Plex Mono", size=10, color="#ef4444"),
-    textposition="top right",
-    name="Peak",
-    showlegend=False
+    textposition="top right", showlegend=False
 ))
 
 # Low marker
 fig.add_trace(go.Scatter(
-    x=[low_time], y=[low],
-    mode="markers+text",
-    marker=dict(size=10, color="#22c55e", symbol="circle"),
+    x=[low_time], y=[low], mode="markers+text",
+    marker=dict(size=10, color="#22c55e", symbol="circle-open", line_width=2),
     text=[f"LOW {low:.0f}"],
     textfont=dict(family="IBM Plex Mono", size=10, color="#22c55e"),
-    textposition="bottom right",
-    name="Low",
-    showlegend=False
+    textposition="bottom right", showlegend=False
 ))
 
 fig.update_layout(
-    height=400, template="plotly_dark",
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
+    height=380, template="plotly_dark",
+    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
     margin=dict(l=0, r=10, t=10, b=10),
-    xaxis=dict(
-        showgrid=False, color="#334155",
-        tickfont=dict(family="IBM Plex Mono", size=10),
-        title=""
-    ),
-    yaxis=dict(
-        showgrid=True, gridcolor="rgba(255,255,255,0.04)",
-        color="#334155",
-        tickfont=dict(family="IBM Plex Mono", size=10),
-        title="gCO₂/kWh"
-    ),
+    xaxis=dict(showgrid=False, color="#334155",
+               tickfont=dict(family="IBM Plex Mono", size=10)),
+    yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.04)", color="#334155",
+               tickfont=dict(family="IBM Plex Mono", size=10), title="gCO₂/kWh"),
     hovermode="x unified",
-    showlegend=False
+    legend=dict(font=dict(family="IBM Plex Mono", size=10, color="#475569"),
+                bgcolor="transparent", borderwidth=0)
 )
-
 st.plotly_chart(fig, use_container_width=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ── LOWER PANELS
 col_l, col_r = st.columns(2)
 
 with col_l:
-    st.markdown("""
-    <div class="chart-card">
-        <div class="chart-title">Optimal Scheduling Windows Today</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Derive actual windows from data
-    low_time_str  = low_time.strftime("%H:%M")
-    low_end_str   = (low_time + pd.Timedelta(hours=2, minutes=30)).strftime("%H:%M")
-    avg_low = best_window["carbon"].mean()
+    badge_classes = ["b-best", "b-good", "b-ok"]
+    badge_labels  = ["BEST", "GOOD", "OK"]
+    
+    windows_html = ""
+    for i, w in enumerate(windows):
+        bc  = badge_classes[i] if i < len(badge_classes) else "b-ok"
+        bl  = badge_labels[i]  if i < len(badge_labels)  else "OK"
+        col = "#22c55e" if i == 0 else ("#f59e0b" if i == 1 else "#475569")
+        saving = ((avg - w["avg"]) / avg * 100) if avg > 0 else 0
+        windows_html += f"""
+        <div class="win-item">
+            <div>
+                <div class="win-time" style="color:{col}">
+                    {w['start'].strftime('%H:%M')} – {w['end'].strftime('%H:%M')}
+                </div>
+                <div class="win-avg">
+                    Avg {w['avg']:.0f} gCO₂/kWh · {w['duration_h']:.1f}h window ·
+                    ~{max(saving, 0):.0f}% below average
+                </div>
+            </div>
+            <div class="win-badge {bc}">{bl}</div>
+        </div>"""
 
     st.markdown(f"""
     <div class="chart-card">
-        <div class="window-card">
-            <div>
-                <div class="window-time" style="color:#22c55e">{low_time_str} – {low_end_str}</div>
-                <div class="window-meta">Avg {avg_low:.0f} gCO₂/kWh · 2.5hr window</div>
-            </div>
-            <div class="window-badge badge-best">BEST</div>
-        </div>
-        <div class="window-card">
-            <div>
-                <div class="window-time" style="color:#f59e0b">22:00 – 01:00</div>
-                <div class="window-meta">Avg {avg * 0.72:.0f} gCO₂/kWh · 3hr window</div>
-            </div>
-            <div class="window-badge badge-good">GOOD</div>
-        </div>
-        <div class="window-card">
-            <div>
-                <div class="window-time" style="color:#475569">03:00 – 06:00</div>
-                <div class="window-meta">Avg {avg * 0.88:.0f} gCO₂/kWh · 3hr window</div>
-            </div>
-            <div class="window-badge badge-ok">OK</div>
-        </div>
+        <div class="chart-title">Optimal Scheduling Windows</div>
+        <div class="chart-sub">Derived from today's live forecast data</div>
+        {windows_html}
     </div>
     """, unsafe_allow_html=True)
 
 with col_r:
-    st.markdown("""
-    <div class="chart-card">
-        <div class="chart-title">Grid Intelligence Insights</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    variation = ((peak - low) / avg * 100)
+    max_saving = min(swing_pct, 70)
     st.markdown(f"""
     <div class="chart-card">
-        <div class="insight-box">
-            <div class="insight-label">Analysis</div>
-            UK grid shows strong temporal carbon variation of ±{volatility:.0f} gCO₂/kWh today.
-            Carbon intensity ranges from <strong style="color:#22c55e">{low:.0f}</strong>
-            to <strong style="color:#ef4444">{peak:.0f}</strong> gCO₂/kWh
-            — a {variation:.0f}% swing that directly enables carbon-aware scheduling.<br><br>
-            <strong style="color:#94a3b8">Recommendation:</strong> Schedule GPU training jobs
-            starting {low_time.strftime('%H:%M')} for maximum carbon efficiency.
-            Expected saving vs immediate execution: up to
-            <strong style="color:#22c55e">{min(((peak - low) / peak * 100), 70):.0f}%</strong>.
+        <div class="chart-title">Grid Intelligence Analysis</div>
+        <div class="chart-sub">CAML-TC carbon opportunity score</div>
+        <div class="insight">
+            <div class="ins-lbl">Today's Carbon Opportunity</div>
+            The UK grid shows <strong style="color:#94a3b8">±{vol:.0f} gCO₂/kWh</strong> volatility
+            today — a <strong style="color:#22c55e">{swing_pct:.0f}%</strong> peak-to-low swing
+            across 24 hours. This is the window of opportunity CAML-TC exploits.<br><br>
+            <strong style="color:#94a3b8">Recommended action:</strong> Schedule GPU training
+            starting <strong style="color:#22c55e">{low_time.strftime('%H:%M')}</strong> for
+            maximum carbon efficiency. Expected saving vs immediate execution:
+            up to <strong style="color:#22c55e">{max_saving:.0f}%</strong>.<br><br>
+            <strong style="color:#94a3b8">Strategy:</strong> {"RL agent engaged — high grid volatility detected." if vol > 30 else "Heuristic scheduler sufficient — moderate grid volatility."}
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-# ── DATA PANEL
+# ── DATA TABS
 st.markdown("<br>", unsafe_allow_html=True)
-tab1, tab2, tab3 = st.tabs(["Summary", "Forecast Data", "Insights"])
+tab1, tab2, tab3 = st.tabs(["Summary", "Raw Forecast Data", "Research Notes"])
 
 with tab1:
-    st.json({
-        "peak_gCO2_kWh":       round(float(peak), 2),
-        "low_gCO2_kWh":        round(float(low), 2),
-        "average_gCO2_kWh":    round(float(avg), 2),
-        "volatility_std":      round(float(volatility), 2),
-        "peak_time":           str(peak_time),
-        "low_time":            str(low_time),
-        "data_points":         len(df),
-        "carbon_reduction_potential_pct": round(float((peak - low) / peak * 100), 1)
-    })
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.json({
+            "peak_gCO2_kWh":      round(float(peak), 1),
+            "low_gCO2_kWh":       round(float(low), 1),
+            "average_gCO2_kWh":   round(float(avg), 1),
+            "volatility_std":     round(float(vol), 1),
+            "peak_time_utc":      str(peak_time),
+            "low_time_utc":       str(low_time),
+            "data_intervals":     len(df),
+            "scheduling_opportunity_pct": round(float(swing_pct), 1),
+        })
+    with col_b:
+        st.json({
+            "best_window_start":  str(windows[0]["start"]) if windows else "N/A",
+            "best_window_avg":    round(windows[0]["avg"], 1) if windows else "N/A",
+            "strategy_trigger":   "rl" if vol > 30 else "heuristic",
+            "actual_points":      int(df["confidence"].eq("Actual").sum()),
+            "forecast_points":    int(df["confidence"].eq("Forecast").sum()),
+        })
 
 with tab2:
-    display_df = df[["from", "carbon"]].copy()
-    display_df.columns = ["Timestamp", "Carbon Intensity (gCO₂/kWh)"]
-    st.dataframe(display_df, use_container_width=True, height=300)
+    display = df[["from", "forecast", "actual", "carbon", "confidence"]].copy()
+    display.columns = ["Timestamp", "Forecast (gCO₂/kWh)", "Actual (gCO₂/kWh)", "Used (gCO₂/kWh)", "Source"]
+    st.dataframe(display, use_container_width=True, height=300)
 
 with tab3:
     st.markdown("""
-    <div class="insight-box" style="margin-top:4px">
-        <div class="insight-label">Why this matters</div>
-        The UK grid shows strong temporal carbon variation driven by renewable intermittency.
-        This directly enables three key capabilities for carbon-aware ML:<br><br>
-        <strong style="color:#94a3b8">1. Carbon-aware scheduling</strong> — delay training to low-carbon windows<br>
-        <strong style="color:#94a3b8">2. RL-based decision systems</strong> — learn optimal timing under uncertainty<br>
-        <strong style="color:#94a3b8">3. Dynamic workload shifting</strong> — respond to real-time grid changes<br><br>
-        The larger the daily carbon range, the greater the potential emissions savings.
+    <div class="insight" style="margin-top:4px;">
+        <div class="ins-lbl">Why temporal carbon variation enables carbon-aware scheduling</div>
+        The UK grid's carbon intensity is highly time-dependent, driven by renewable intermittency
+        (wind and solar), demand peaks (morning and evening), and baseload mix.
+        CAML-TC exploits three temporal properties:<br><br>
+        <strong style="color:#94a3b8">1. Diurnal patterns</strong> — low demand overnight, predictable low-carbon windows<br>
+        <strong style="color:#94a3b8">2. Renewable stochasticity</strong> — wind bursts create short-lived green windows the RL agent learns to identify<br>
+        <strong style="color:#94a3b8">3. Forecast reliability decay</strong> — confidence drops with horizon; CAML-TC weights near-term slots higher via exponential decay <code>wₜ = exp(−λ·Δt)</code><br><br>
+        The larger the daily swing, the greater the potential saving. On high-variability days (σ > 30), the RL agent
+        activates in place of the heuristic — this is when adaptive learning has the most to offer.
     </div>
     """, unsafe_allow_html=True)

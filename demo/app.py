@@ -1,404 +1,594 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="CarbonML · Carbon-Aware ML Platform",
+    page_title="CAML-TC · Carbon-Aware ML Scheduler",
+    page_icon="🌍",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# =========================
-# GLOBAL CSS & ENHANCEMENTS
-# =========================
+# ══════════════════════════════════════════════════════════════
+# SHARED STYLES
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, .stApp {
-    background: #080d12 !important;
+    background: #05090f !important;
     font-family: 'IBM Plex Sans', sans-serif;
-    color: #e2e8f0;
+    color: #cbd5e1;
+    overflow-x: hidden;
 }
 
-/* Hide Streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
 
-/* Grid background */
+/* ── GRID TEXTURE ── */
 .stApp::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image:
-        linear-gradient(rgba(34,197,94,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34,197,94,0.025) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
+        linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px);
+    background-size: 52px 52px;
 }
 
-/* ── TICKER ── */
-.ticker-wrap {
-    background: #0e1520;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    padding: 10px 0;
+/* ── LIVE TICKER ── */
+.ticker-bar {
+    position: relative; z-index: 10;
+    background: #0a1018;
+    border-bottom: 1px solid rgba(34,197,94,0.12);
+    padding: 9px 0;
     overflow: hidden;
+}
+.ticker-track {
+    display: inline-flex; gap: 56px;
+    animation: scroll 35s linear infinite;
     white-space: nowrap;
 }
-.ticker-inner {
-    display: inline-flex;
-    gap: 48px;
-    animation: ticker 28s linear infinite;
-}
-@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-.ticker-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+@keyframes scroll { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+.t-item {
+    display: inline-flex; align-items: center; gap: 10px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10.5px; letter-spacing: 0.06em;
 }
-.t-label { color: #64748b; letter-spacing: 0.08em; }
-.t-val   { color: #e2e8f0; font-weight: 500; }
-.t-up    { color: #4ade80; }
+.t-key   { color: #334155; text-transform: uppercase; }
+.t-val   { color: #94a3b8; font-weight: 500; }
+.t-up    { color: #22c55e; }
 .t-dn    { color: #ef4444; }
-.t-sep   { color: #1e293b; }
+.t-pipe  { color: #1e293b; }
 
-/* ── NAV ── */
-.topnav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    background: rgba(8,13,18,0.95);
-    position: sticky; top: 0; z-index: 100;
+/* ── TOP NAV ── */
+.top-nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 48px;
+    background: rgba(5,9,15,0.92);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
 }
-.logo {
+.nav-brand {
     display: flex; align-items: center; gap: 10px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px; font-weight: 600;
-    color: #22c55e;
+    font-size: 14px; font-weight: 600; color: #f1f5f9;
     letter-spacing: 0.06em;
 }
-.logo-dot {
-    width: 8px; height: 8px; border-radius: 50%;
+.brand-dot {
+    width: 9px; height: 9px; border-radius: 50%;
     background: #22c55e;
-    box-shadow: 0 0 10px #22c55e;
-    display: inline-block;
-    animation: blink 2s ease-in-out infinite;
+    box-shadow: 0 0 12px rgba(34,197,94,0.7);
+    animation: pulse 2.4s ease-in-out infinite;
 }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
-.live-badge {
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+.nav-links {
+    display: flex; gap: 32px;
+    font-size: 12px; color: #475569;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #22c55e;
-    background: rgba(34,197,94,0.1);
-    border: 1px solid rgba(34,197,94,0.25);
-    padding: 5px 14px;
-    border-radius: 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
+    letter-spacing: 0.05em;
 }
-
-/* ── HERO ── */
-.hero {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 80px 32px 56px;
-    text-align: center;
-}
-.hero-tag {
-    display: inline-flex; align-items: center; gap: 8px;
+.nav-pill {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; color: #22c55e;
     background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.2);
-    padding: 5px 16px; border-radius: 20px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 28px;
-}
-.hero h1 {
-    font-size: 58px; font-weight: 700;
-    line-height: 1.1; letter-spacing: -0.025em;
-    color: #f1f5f9; margin-bottom: 20px;
-}
-.hero h1 em {
-    font-style: normal;
-    color: #22c55e;
-    text-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
-}
-.hero-sub {
-    font-size: 18px; color: #94a3b8;
-    line-height: 1.7; font-weight: 300;
-    max-width: 650px; margin: 0 auto 44px;
+    border: 1px solid rgba(34,197,94,0.22);
+    padding: 6px 16px; border-radius: 20px;
+    display: flex; align-items: center; gap: 7px;
+    letter-spacing: 0.06em;
 }
 
-/* ── IMPACT STRIP ── */
-.impact-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border-top: 1px solid rgba(255,255,255,0.07);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    background: rgba(255, 255, 255, 0.01);
-}
-.impact-cell {
-    padding: 40px 20px;
+/* ── HERO ── */
+.hero-wrap {
+    max-width: 900px; margin: 0 auto;
+    padding: 96px 32px 72px;
     text-align: center;
-    border-right: 1px solid rgba(255,255,255,0.07);
-    transition: 0.3s ease;
+    position: relative; z-index: 1;
 }
-.impact-cell:hover { background: rgba(34, 197, 94, 0.04); }
-.impact-cell:last-child { border-right: none; }
-
-.impact-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 38px; font-weight: 600;
-    color: #4ade80;
-    display: block; margin-bottom: 6px;
-    letter-spacing: -0.02em;
-    text-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
-}
-.impact-label {
-    font-size: 12px; color: #cbd5e1;
-    line-height: 1.5; text-transform: uppercase; letter-spacing: 0.05em;
-}
-
-/* ── MODULES ── */
-.section {
-    max-width: 1060px;
-    margin: 0 auto;
-    padding: 64px 32px;
-}
-.section-eyebrow {
+.hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; color: #22c55e;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    margin-bottom: 10px;
+    background: rgba(34,197,94,0.07);
+    border: 1px solid rgba(34,197,94,0.18);
+    padding: 6px 18px; border-radius: 20px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 32px;
+}
+.hero-h1 {
+    font-size: 62px; font-weight: 700;
+    line-height: 1.08; letter-spacing: -0.03em;
+    color: #f1f5f9; margin-bottom: 24px;
+}
+.hero-h1 .accent { color: #22c55e; }
+.hero-sub {
+    font-size: 18px; font-weight: 300;
+    color: #64748b; line-height: 1.75;
+    max-width: 620px; margin: 0 auto 16px;
+}
+.hero-cite {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: #334155;
+    letter-spacing: 0.06em; margin-bottom: 48px;
+}
+.hero-cite a { color: #22c55e; text-decoration: none; }
+
+/* ── IMPACT ROW ── */
+.impact-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.012);
+    position: relative; z-index: 1;
+}
+.impact-cell {
+    padding: 44px 20px; text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.25s;
+}
+.impact-cell:last-child { border-right: none; }
+.impact-cell:hover { background: rgba(34,197,94,0.035); }
+.impact-n {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 42px; font-weight: 600;
+    color: #22c55e; display: block; margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 28px rgba(34,197,94,0.25);
+}
+.impact-l {
+    font-size: 11px; color: #475569;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    line-height: 1.55;
+}
+
+/* ── HOW IT WORKS ── */
+.section { max-width: 1080px; margin: 0 auto; padding: 72px 32px; position: relative; z-index: 1; }
+.section-eye {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: #22c55e;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    margin-bottom: 12px;
     display: flex; align-items: center; gap: 10px;
 }
-.section-eyebrow::before {
-    content: ''; display: inline-block;
-    width: 20px; height: 1px; background: #22c55e;
+.section-eye::before { content:''; display:inline-block; width:24px; height:1px; background:#22c55e; }
+.section-h2 {
+    font-size: 34px; font-weight: 600;
+    color: #f1f5f9; letter-spacing: -0.015em; margin-bottom: 8px;
 }
-.section h2 {
-    font-size: 32px; font-weight: 600;
-    color: #f1f5f9; letter-spacing: -0.01em;
-    margin-bottom: 6px;
-}
-.section-sub { font-size: 14px; color: #94a3b8; margin-bottom: 36px; }
+.section-sub { font-size: 14px; color: #64748b; margin-bottom: 40px; }
 
-.modules-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+/* ── PIPELINE ── */
+.pipeline {
+    display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr;
+    align-items: center; gap: 0;
+    margin: 48px 0;
 }
-.module-card {
-    background: #0e1520;
+.pipe-step {
+    background: #0c1420;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px;
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.25s;
+    border-radius: 12px; padding: 28px 20px;
+    text-align: center; transition: all 0.25s;
 }
-.module-card:hover {
-    border-color: rgba(34,197,94,0.3);
-    background: #131c29;
-    transform: translateY(-2px);
+.pipe-step:hover { border-color: rgba(34,197,94,0.25); background: #111e2d; }
+.pipe-icon { font-size: 26px; margin-bottom: 12px; }
+.pipe-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: #94a3b8;
+    font-weight: 500; margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.06em;
 }
-.module-title {
-    font-size: 16px; font-weight: 600;
-    color: #f1f5f9; margin-bottom: 8px;
+.pipe-desc { font-size: 12px; color: #475569; line-height: 1.6; }
+.pipe-arrow { text-align: center; color: #1e3a2a; font-size: 18px; }
+
+/* ── FEATURE CARDS ── */
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.feat-card {
+    background: #0c1420;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 30px 24px;
+    transition: all 0.25s; position: relative; overflow: hidden;
 }
-.module-desc {
-    font-size: 14px; color: #94a3b8;
-    line-height: 1.65; margin-bottom: 18px;
+.feat-card::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 2px;
+    background: transparent; transition: background 0.25s;
 }
+.feat-card:hover { border-color: rgba(34,197,94,0.2); transform: translateY(-3px); }
+.feat-card:hover::after { background: #22c55e; }
+.feat-icon { font-size: 22px; margin-bottom: 14px; }
+.feat-title { font-size: 16px; font-weight: 600; color: #e2e8f0; margin-bottom: 10px; }
+.feat-body { font-size: 13px; color: #64748b; line-height: 1.7; }
+
+/* ── RESULTS STRIP ── */
+.results-strip {
+    background: #0a1018;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 64px 0;
+}
+.results-inner { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+.results-table {
+    width: 100%; border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 32px;
+}
+.results-table th {
+    font-size: 10px; color: #334155;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0 20px 14px; text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.results-table td {
+    font-size: 13px; color: #94a3b8;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.results-table tr:last-child td { border-bottom: none; }
+.td-strategy { color: #f1f5f9; font-weight: 500; }
+.td-best { color: #22c55e; font-weight: 600; }
+.bar-wrap { background: rgba(255,255,255,0.04); border-radius: 3px; height: 6px; width: 140px; }
+.bar-fill { height: 100%; border-radius: 3px; }
 
 /* ── RESEARCH BLOCK ── */
-.research-grid {
-    display: grid;
-    grid-template-columns: 1fr 1px 1fr;
-    gap: 40px;
-    background: #0e1520;
+.research-card {
+    background: #0c1420;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px;
-    padding: 40px;
-    margin-top: 16px;
+    border-radius: 16px; padding: 48px;
+    display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    gap: 40px; align-items: start;
 }
-.v-divider { background: rgba(255,255,255,0.07); }
+.r-divider { background: rgba(255,255,255,0.06); }
+.r-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: #22c55e;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    margin-bottom: 12px;
+}
+.r-h3 { font-size: 17px; font-weight: 600; color: #f1f5f9; margin-bottom: 10px; }
+.r-body { font-size: 13px; color: #64748b; line-height: 1.75; }
 
 /* ── FOOTER ── */
 .site-footer {
-    border-top: 1px solid rgba(255,255,255,0.07);
-    padding: 30px 42px;
-    display: flex;
-    justify-content: space-between;
-    background: #06090d;
-    margin-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: #04070c;
+    padding: 32px 48px;
+    display: flex; justify-content: space-between; align-items: center;
 }
-.footer-l { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #64748b; }
-.footer-l span { color: #22c55e; }
+.footer-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: #1e293b;
+}
+.footer-brand strong { color: #334155; }
+.footer-links {
+    display: flex; gap: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: #1e293b;
+}
+.footer-links a { color: #334155; text-decoration: none; }
+.footer-links a:hover { color: #22c55e; }
 
-/* Streamlit button overrides */
+/* ── STREAMLIT BUTTON OVERRIDE ── */
 div.stButton > button {
     font-family: 'IBM Plex Mono', monospace !important;
-    border-radius: 8px !important;
-    padding: 10px 24px !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    border-radius: 8px !important; padding: 10px 28px !important;
+    letter-spacing: 0.04em !important;
+    transition: all 0.2s !important;
+    width: 100% !important;
+}
+div.stButton > button[kind="primary"] {
+    background: #22c55e !important; color: #051a0d !important;
+    border: none !important;
+}
+div.stButton > button[kind="primary"]:hover {
+    background: #16a34a !important;
+    box-shadow: 0 6px 24px rgba(34,197,94,0.28) !important;
+    transform: translateY(-1px);
+}
+div.stButton > button[kind="secondary"] {
+    background: transparent !important; color: #475569 !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+div.stButton > button[kind="secondary"]:hover {
+    color: #e2e8f0 !important;
+    border-color: rgba(255,255,255,0.2) !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
-# TICKER COMPONENT
-# =========================
+# ══════════════════════════════════════════════════════════════
+# LIVE TICKER  (static values — replace with API call if needed)
+# ══════════════════════════════════════════════════════════════
 ticker_items = [
-    ("CARBON INTENSITY", "178 gCO₂/kWh", "▼ 12%", "up"),
-    ("WIND GENERATION",  "32.4 GW",       "▲ 4.1%", "up"),
-    ("SOLAR OUTPUT",     "7.1 GW",        "▲ 2.2%", "up"),
-    ("GRID DEMAND",      "38.2 GW",       "▼ 1.0%", "dn"),
-    ("COAL CAPACITY",    "0 GW",          "NET ZERO", "up"),
+    ("CARBON NOW",      "178 gCO₂/kWh", "▼ 12%",  "up"),
+    ("WIND CAPACITY",   "32.4 GW",       "▲ 4.1%", "up"),
+    ("SOLAR OUTPUT",    "7.1 GW",        "▲ 2.2%", "up"),
+    ("GRID DEMAND",     "38.2 GW",       "▼ 1.0%", "dn"),
+    ("COAL ONLINE",     "0 GW",          "NET ZERO","up"),
+    ("RENEWABLES MIX",  "58%",           "▲ 6pt",  "up"),
+    ("FORECAST HORIZON","24 hr",         "LIVE",    "up"),
 ]
-ticker_html = '<div class="ticker-inner">'
-for label, val, delta, direction in ticker_items * 2:
-    cls = "t-up" if direction == "up" else ("t-dn" if direction == "dn" else "t-val")
-    ticker_html += f'''
-        <div class="ticker-item">
-            <span class="t-label">{label}</span>
-            <span class="t-val">{val}</span>
-            <span class="{cls}">{delta}</span>
-            <span class="t-sep">·</span>
-        </div>'''
-ticker_html += '</div>'
-st.markdown(f'<div class="ticker-wrap">{ticker_html}</div>', unsafe_allow_html=True)
+items_html = ""
+for label, val, delta, d in ticker_items * 2:
+    cls = "t-up" if d == "up" else "t-dn"
+    items_html += f"""
+    <span class="t-item">
+        <span class="t-key">{label}</span>
+        <span class="t-val">{val}</span>
+        <span class="{cls}">{delta}</span>
+        <span class="t-pipe">|</span>
+    </span>"""
+st.markdown(f'<div class="ticker-bar"><div class="ticker-track">{items_html}</div></div>', unsafe_allow_html=True)
 
-# =========================
-# NAVIGATION
-# =========================
+# ══════════════════════════════════════════════════════════════
+# TOP NAV
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
-<div class="topnav">
-    <div class="logo"><span class="logo-dot"></span> CARBONML</div>
-    <div class="live-badge"><span class="logo-dot"></span> UK NATIONAL GRID · LIVE</div>
+<div class="top-nav">
+    <div class="nav-brand"><span class="brand-dot"></span> CAML-TC</div>
+    <div class="nav-links">
+        <span>Dashboard</span>
+        <span>Forecast</span>
+        <span>Simulation</span>
+        <span>Docs</span>
+    </div>
+    <div class="nav-pill"><span class="brand-dot"></span> UK NATIONAL GRID · LIVE</div>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
-# HERO SECTION
-# =========================
+# ══════════════════════════════════════════════════════════════
+# HERO
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
-<div class="hero">
-    <div class="hero-tag"><span class="logo-dot"></span> UK Net Zero 2050 Infrastructure</div>
-    <h1>Schedule ML workloads at<br><em>peak carbon efficiency</em></h1>
+<div class="hero-wrap">
+    <div class="hero-eyebrow"><span class="brand-dot"></span> IEEE EEEIC 2026 · Peer-Reviewed Research</div>
+    <h1 class="hero-h1">
+        Train ML models at<br>
+        <span class="accent">peak carbon efficiency</span>
+    </h1>
     <p class="hero-sub">
-        The UK's first carbon-aware ML scheduling platform. Combines real-time National Grid
-        carbon forecasting with reinforcement learning to cut AI training emissions by up to 70%.
+        CAML-TC combines real-time UK National Grid data with a risk-aware reinforcement learning 
+        agent to shift ML compute into low-carbon windows — automatically.
+    </p>
+    <p class="hero-cite">
+        Published at <a href="https://ieeexplore.ieee.org" target="_blank">IEEE EEEIC 2026</a> · 
+        Q1, Scopus-indexed · <code>pip install caml-tc</code>
     </p>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
-# HERO BUTTONS
-# =========================
-col_l, col_c, col_r = st.columns([1, 2, 1])
+# CTA BUTTONS
+_, col_c, _ = st.columns([1, 2, 1])
 with col_c:
     b1, b2 = st.columns(2)
-    
     with b1:
-        if st.button("⟶ Launch Dashboard", 
-                    type="primary", 
-                    use_container_width=True,
-                    key="launch_btn"):
+        if st.button("⟶  Open Dashboard", type="primary", key="hero_dash"):
             st.switch_page("pages/overview.py")
-    
     with b2:
-        if st.button("Run Simulation Lab", 
-                    type="primary", 
-                    use_container_width=True,
-                    key="sim_btn"):
+        if st.button("Run Simulation Lab", type="secondary", key="hero_sim"):
             st.switch_page("pages/simulation.py")
 
-# =========================
-# IMPACT STRIP
-# =========================
+# ══════════════════════════════════════════════════════════════
+# IMPACT NUMBERS
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
-<div class="impact-strip">
+<div class="impact-row">
     <div class="impact-cell">
-        <span class="impact-num">↓ 70%</span>
-        <span class="impact-label">Max CO₂<br>Reduction</span>
+        <span class="impact-n">↓ 34%</span>
+        <span class="impact-l">CO₂ reduction<br>realistic conditions</span>
     </div>
     <div class="impact-cell">
-        <span class="impact-num">24 / 7</span>
-        <span class="impact-label">Live Grid<br>Monitoring</span>
+        <span class="impact-n">&gt; 50%</span>
+        <span class="impact-l">CO₂ reduction<br>optimal low-variability</span>
     </div>
     <div class="impact-cell">
-        <span class="impact-num">RL</span>
-        <span class="impact-label">Adaptive<br>Scheduling Agent</span>
+        <span class="impact-n">8,000</span>
+        <span class="impact-l">RL training episodes<br>on real UK grid data</span>
     </div>
     <div class="impact-cell">
-        <span class="impact-num">2050</span>
-        <span class="impact-label">Net Zero<br>Aligned</span>
+        <span class="impact-n">24 hr</span>
+        <span class="impact-l">forecast horizon<br>with uncertainty decay</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
-# MODULES SECTION
-# =========================
+# ══════════════════════════════════════════════════════════════
+# HOW IT WORKS — PIPELINE
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="section">
-    <div class="section-eyebrow">Platform Modules</div>
-    <h2>Everything your ML team needs to go carbon-zero</h2>
-    <p class="section-sub">Three integrated systems working in real time across the UK national grid</p>
-    <div class="modules-grid">
-        <div class="module-card">
-            <div style="font-size:24px; margin-bottom:15px;">⚡</div>
-            <div class="module-title">Carbon Scheduler</div>
-            <div class="module-desc">Identifies optimal low-carbon execution windows using 24-hour National Grid forecasting.</div>
+    <div class="section-eye">System Architecture</div>
+    <h2 class="section-h2">From raw grid data to scheduling decision</h2>
+    <p class="section-sub">A closed-loop pipeline — no manual intervention required</p>
+    <div class="pipeline">
+        <div class="pipe-step">
+            <div class="pipe-icon">📡</div>
+            <div class="pipe-title">Grid API</div>
+            <div class="pipe-desc">Real-time + 24h forecast from UK National Grid ESO at 30-min resolution</div>
         </div>
-        <div class="module-card">
-            <div style="font-size:24px; margin-bottom:15px;">📡</div>
-            <div class="module-title">Carbon Intelligence API</div>
-            <div class="module-desc">Real-time integration with National Grid ESO carbon data with 94%+ forecast accuracy.</div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+            <div class="pipe-icon">🧮</div>
+            <div class="pipe-title">Carbon Intelligence</div>
+            <div class="pipe-desc">Exponential confidence decay · peak/low detection · uncertainty modelling</div>
         </div>
-        <div class="module-card">
-            <div style="font-size:24px; margin-bottom:15px;">🤖</div>
-            <div class="module-title">RL Simulation Lab</div>
-            <div class="module-desc">Reinforcement learning agent learns optimal execution timing under carbon uncertainty.</div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+            <div class="pipe-icon">🤖</div>
+            <div class="pipe-title">Scheduling Engine</div>
+            <div class="pipe-desc">Heuristic baseline + Q-learning RL agent · automatically selects best strategy</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+            <div class="pipe-icon">✅</div>
+            <div class="pipe-title">Optimal Window</div>
+            <div class="pipe-desc">Execution window with quantified CO₂ savings vs immediate baseline</div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
-# RESEARCH CONTRIBUTION
-# =========================
+# ══════════════════════════════════════════════════════════════
+# FEATURE GRID
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
-<div class="section" style="padding-top:0">
-    <div class="section-eyebrow">Research Contribution</div>
-    <h2>Bridging industrial and individual ML operations</h2>
-    <div class="research-grid">
-        <div class="research-col">
-            <h3 style="color:#f1f5f9; font-size:18px;">The Problem</h3>
-            <p style="color:#94a3b8; font-size:14px; line-height:1.6;">Google and Meta use carbon-aware scheduling internally, but this isn't available to independent researchers or university labs.</p>
+<div class="section" style="padding-top: 0;">
+    <div class="section-eye">Key Innovations</div>
+    <h2 class="section-h2">What makes CAML-TC different</h2>
+    <p class="section-sub">Built on peer-reviewed ML research, not just heuristics</p>
+    <div class="feat-grid">
+        <div class="feat-card">
+            <div class="feat-icon">⚖️</div>
+            <div class="feat-title">Multi-objective RL reward</div>
+            <div class="feat-body">Jointly optimises carbon intensity, forecast uncertainty, delay penalty, and deadline constraints — not just the lowest carbon slot.</div>
         </div>
-        <div class="v-divider"></div>
-        <div class="research-col">
-            <h3 style="color:#f1f5f9; font-size:18px;">Our Solution</h3>
-            <p style="color:#94a3b8; font-size:14px; line-height:1.6;">A lightweight RL-enhanced carbon optimisation layer that shifts execution to green grid windows automatically.</p>
+        <div class="feat-card">
+            <div class="feat-icon">📉</div>
+            <div class="feat-title">Exponential confidence decay</div>
+            <div class="feat-body"><code>wₜ = exp(−λ·Δt)</code> — prevents over-commitment to unreliable long-horizon predictions. The further ahead, the less the agent trusts the forecast.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon">🎲</div>
+            <div class="feat-title">Stochastic noise injection</div>
+            <div class="feat-body">Training injects real grid variability noise, forcing the RL agent to learn robust policies — not just patterns that work on clean signals.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon">🧠</div>
+            <div class="feat-title">Hybrid strategy selection</div>
+            <div class="feat-body">Heuristic scheduler handles stable grids. RL agent activates when volatility exceeds threshold — where static rules break down and learning matters most.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon">🧪</div>
+            <div class="feat-title">CodeCarbon validation</div>
+            <div class="feat-body">Results validated with CodeCarbon emissions measurement — not simulated numbers. Reproducible, peer-reviewed experimental pipeline.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon">📦</div>
+            <div class="feat-title">pip-installable library</div>
+            <div class="feat-body">Drop into any existing ML pipeline in three lines of code. No infrastructure changes. No model retraining. Works with PyTorch, TensorFlow, and custom loops.</div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
+# ══════════════════════════════════════════════════════════════
+# RESULTS TABLE
+# ══════════════════════════════════════════════════════════════
+st.markdown("""
+<div class="results-strip">
+    <div class="results-inner">
+        <div class="section-eye" style="margin-bottom:12px;">Validated Results</div>
+        <h2 class="section-h2">Tested on real UK National Grid data</h2>
+        <p class="section-sub">Emissions measured with CodeCarbon across 5 experimental runs</p>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Strategy</th>
+                    <th>Conditions</th>
+                    <th>CO₂ Reduction</th>
+                    <th>Relative Performance</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="td-strategy" style="color:#ef4444;">Baseline</td>
+                    <td>Immediate execution</td>
+                    <td style="color:#ef4444;">0%</td>
+                    <td><div class="bar-wrap"><div class="bar-fill" style="width:100%;background:#ef4444;"></div></div></td>
+                    <td>Industry default — no carbon awareness</td>
+                </tr>
+                <tr>
+                    <td class="td-strategy" style="color:#f59e0b;">Heuristic</td>
+                    <td>Realistic UK grid</td>
+                    <td style="color:#f59e0b;">~28%</td>
+                    <td><div class="bar-wrap"><div class="bar-fill" style="width:72%;background:#f59e0b;"></div></div></td>
+                    <td>Strong interpretable baseline</td>
+                </tr>
+                <tr>
+                    <td class="td-strategy">RL Agent (CAML-TC)</td>
+                    <td>Realistic UK grid</td>
+                    <td class="td-best">28 – 34%</td>
+                    <td><div class="bar-wrap"><div class="bar-fill" style="width:66%;background:#22c55e;"></div></div></td>
+                    <td>Matches heuristic on stable grids</td>
+                </tr>
+                <tr>
+                    <td class="td-strategy">RL Agent (CAML-TC)</td>
+                    <td>High volatility / optimal</td>
+                    <td class="td-best">> 50%</td>
+                    <td><div class="bar-wrap"><div class="bar-fill" style="width:48%;background:#22c55e;"></div></div></td>
+                    <td>RL outperforms heuristic where it matters most</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════
+# RESEARCH CONTEXT
+# ══════════════════════════════════════════════════════════════
+st.markdown("""
+<div class="section">
+    <div class="section-eye">Research Context</div>
+    <h2 class="section-h2">Bridging the gap between industry and research</h2>
+    <div class="research-card" style="margin-top:28px;">
+        <div>
+            <div class="r-label">The Problem</div>
+            <h3 class="r-h3">Proprietary and inaccessible</h3>
+            <p class="r-body">Google has run carbon-aware compute shifting internally since 2020. Microsoft released a partial SDK. Neither is available to independent researchers, university labs, or individual engineers — the people responsible for a rapidly growing share of AI compute.</p>
+        </div>
+        <div class="r-divider"></div>
+        <div>
+            <div class="r-label">The Approach</div>
+            <h3 class="r-h3">Open, deployable, reproducible</h3>
+            <p class="r-body">CAML-TC is a lightweight RL-enhanced carbon optimisation layer that runs on top of any existing training loop. It uses the UK government's own free public carbon intensity API — infrastructure already built for exactly this purpose.</p>
+        </div>
+        <div class="r-divider"></div>
+        <div>
+            <div class="r-label">UK Net Zero Alignment</div>
+            <h3 class="r-h3">Data centres are a growing problem</h3>
+            <p class="r-body">UK data centres and AI infrastructure are among the fastest-growing electricity consumers. CAML-TC provides the scheduling intelligence layer that was missing — making carbon-aware ML accessible to anyone, without changing a single line of model code.</p>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════
 # FOOTER
-# =========================
+# ══════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="site-footer">
-    <div class="footer-l"><span>CARBONML</span> · Carbon-Aware AI Systems · Built by Sufiyan Ul Rehman</div>
-    <div class="footer-l">Aligned with UK Net Zero 2050</div>
+    <div class="footer-brand">
+        <strong>CAML-TC</strong> · Carbon-Aware ML Training Controller · 
+        Sufiyan Ul Rehman · Ulster University &amp; Solent University (via QA)
+    </div>
+    <div class="footer-links">
+        <a href="https://pypi.org/project/caml-tc" target="_blank">PyPI</a>
+        <a href="https://github.com/sufirehman/carbon-aware-ml-scheduler" target="_blank">GitHub</a>
+        <a href="https://ieeexplore.ieee.org" target="_blank">IEEE Paper</a>
+        <span>MIT License · 2026</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
