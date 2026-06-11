@@ -311,13 +311,13 @@ html, body, .stApp {
 .btn-secondary {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 13px; font-weight: 400; letter-spacing: 0.04em;
-    color: #475569; background: transparent;
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+    color: #22c55e; background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.28); border-radius: 8px;
     padding: 12px 28px; text-decoration: none;
-    transition: color 0.2s, border-color 0.2s;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
     display: inline-block;
 }
-.btn-secondary:hover { color: #e2e8f0; border-color: rgba(255,255,255,0.25); }
+.btn-secondary:hover { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.5); }
 
 /* ── STREAMLIT BUTTON OVERRIDE (other pages) ── */
 div.stButton > button {
