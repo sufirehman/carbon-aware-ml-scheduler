@@ -89,6 +89,11 @@ html, body, .stApp {
     font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.05em;
 }
+.nav-link {
+    color: #475569; text-decoration: none;
+    transition: color 0.2s; letter-spacing: 0.05em;
+}
+.nav-link:hover { color: #22c55e; }
 .nav-pill {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; color: #22c55e;
@@ -288,7 +293,33 @@ html, body, .stApp {
 .footer-links a { color: #334155; text-decoration: none; }
 .footer-links a:hover { color: #22c55e; }
 
-/* ── STREAMLIT BUTTON OVERRIDE ── */
+/* ── HERO CTA BUTTONS ── */
+.hero-cta {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px; margin-top: 40px;
+}
+.btn-primary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+    color: #051a0d; background: #22c55e;
+    border: none; border-radius: 8px;
+    padding: 12px 28px; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+}
+.btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
+.btn-secondary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 400; letter-spacing: 0.04em;
+    color: #475569; background: transparent;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+    padding: 12px 28px; text-decoration: none;
+    transition: color 0.2s, border-color 0.2s;
+    display: inline-block;
+}
+.btn-secondary:hover { color: #e2e8f0; border-color: rgba(255,255,255,0.25); }
+
+/* ── STREAMLIT BUTTON OVERRIDE (other pages) ── */
 div.stButton > button {
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 13px !important; font-weight: 500 !important;
@@ -303,8 +334,6 @@ div.stButton > button[kind="primary"] {
 }
 div.stButton > button[kind="primary"]:hover {
     background: #16a34a !important;
-    box-shadow: 0 6px 24px rgba(34,197,94,0.28) !important;
-    transform: translateY(-1px);
 }
 div.stButton > button[kind="secondary"] {
     background: transparent !important; color: #475569 !important;
@@ -348,46 +377,38 @@ st.markdown("""
 <div class="top-nav">
     <div class="nav-brand"><span class="brand-dot"></span> CAML-TC</div>
     <div class="nav-links">
-        <span>Dashboard</span>
-        <span>Forecast</span>
-        <span>Simulation</span>
-        <span>Docs</span>
+        <a class="nav-link" href="/overview">Dashboard</a>
+        <a class="nav-link" href="/forecast">Forecast</a>
+        <a class="nav-link" href="/simulation">Simulation</a>
+        <a class="nav-link" href="https://pypi.org/project/caml-tc" target="_blank">PyPI &nearr;</a>
     </div>
-    <div class="nav-pill"><span class="brand-dot"></span> UK NATIONAL GRID · LIVE</div>
+    <div class="nav-pill"><span class="brand-dot"></span> UK NATIONAL GRID &middot; LIVE</div>
 </div>
 """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════
 # HERO
 # ══════════════════════════════════════════════════════════════
-st.markdown("""
-<div class="hero-wrap">
-    <div class="hero-eyebrow"><span class="brand-dot"></span> IEEE EEEIC 2026 · Peer-Reviewed Research</div>
+st.markdown("""<div class="hero-wrap">
+    <div class="hero-eyebrow"><span class="brand-dot"></span> IEEE EEEIC 2026 &middot; Peer-Reviewed Research</div>
     <h1 class="hero-h1">
-        Train ML models at<br>
-        <span class="accent">peak carbon efficiency</span>
+        The carbon cost of AI<br>is <span class="accent">a matter of timing</span>
     </h1>
     <p class="hero-sub">
-        CAML-TC combines real-time UK National Grid data with a risk-aware reinforcement learning 
-        agent to shift ML compute into low-carbon windows — automatically.
+        CAML-TC uses real-time UK National Grid data and a risk-aware reinforcement learning agent 
+        to shift ML training into low-carbon windows &mdash; cutting emissions by up to 34% without 
+        touching a single line of model code.
     </p>
     <p class="hero-cite">
-        Published at <a href="https://ieeexplore.ieee.org" target="_blank">IEEE EEEIC 2026</a> · 
-        Q1, Scopus-indexed · <code>pip install caml-tc</code>
+        Published at <a href="https://ieeexplore.ieee.org" target="_blank">IEEE EEEIC 2026</a> &middot;
+        Q1, Scopus-indexed &middot; <code>pip install caml-tc</code>
     </p>
+    <div class="hero-cta">
+        <a class="btn-primary" href="/overview" target="_self">Open Dashboard &rarr;</a>
+        <a class="btn-secondary" href="/simulation" target="_self">Run Simulation Lab</a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
-
-# CTA BUTTONS
-_, col_c, _ = st.columns([1, 2, 1])
-with col_c:
-    b1, b2 = st.columns(2)
-    with b1:
-        if st.button("⟶  Open Dashboard", type="primary", key="hero_dash"):
-            st.switch_page("pages/overview.py")
-    with b2:
-        if st.button("Run Simulation Lab", type="secondary", key="hero_sim"):
-            st.switch_page("pages/simulation.py")
 
 # ══════════════════════════════════════════════════════════════
 # IMPACT NUMBERS

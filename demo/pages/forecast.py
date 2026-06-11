@@ -288,7 +288,7 @@ fig.update_layout(
                tickfont=dict(family="IBM Plex Mono", size=10), title="gCO₂/kWh"),
     hovermode="x unified",
     legend=dict(font=dict(family="IBM Plex Mono", size=10, color="#475569"),
-                bgcolor="transparent", borderwidth=0)
+                bgcolor="rgba(0,0,0,0)")
 )
 st.plotly_chart(fig, use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
