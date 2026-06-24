@@ -32,6 +32,31 @@ html, body, .stApp {
     background-size: 52px 52px;
 }
 
+/* ── TICKER ── */
+.ticker-bar {
+    position: relative; z-index: 10;
+    background: #0a1018;
+    border-bottom: 1px solid rgba(34,197,94,0.12);
+    padding: 9px 0;
+    overflow: hidden;
+}
+.ticker-track {
+    display: inline-flex; gap: 56px;
+    animation: scroll 35s linear infinite;
+    white-space: nowrap;
+}
+@keyframes scroll { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+.t-item {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.06em;
+}
+.t-key  { color: #334155; text-transform: uppercase; }
+.t-val  { color: #94a3b8; font-weight: 500; }
+.t-up   { color: #22c55e; }
+.t-dn   { color: #ef4444; }
+.t-pipe { color: #1e293b; }
+
 /* ── NAVIGATION ── */
 .top-nav {
     position: sticky; top: 0; z-index: 50;
@@ -299,6 +324,32 @@ div.stButton > button[kind="secondary"]:hover {
 }
 </style>
 """, unsafe_allow_html=True)
+
+# ── TICKER
+ticker_items = [
+    ("CARBON NOW",       "178 gCO₂/kWh", "▼ 12%",   "up"),
+    ("WIND CAPACITY",    "32.4 GW",       "▲ 4.1%",  "up"),
+    ("SOLAR OUTPUT",     "7.1 GW",        "▲ 2.2%",  "up"),
+    ("GRID DEMAND",      "38.2 GW",       "▼ 1.0%",  "dn"),
+    ("COAL ONLINE",      "0 GW",          "NET ZERO", "up"),
+    ("RENEWABLES MIX",   "58%",           "▲ 6pt",   "up"),
+    ("FORECAST HORIZON", "24 hr",         "LIVE",     "up"),
+]
+items_html = ""
+for label, val, delta, d in ticker_items * 2:
+    cls = "t-up" if d == "up" else "t-dn"
+    items_html += (
+        f'<span class="t-item">'
+        f'<span class="t-key">{label}</span>'
+        f'<span class="t-val">{val}</span>'
+        f'<span class="{cls}">{delta}</span>'
+        f'<span class="t-pipe">|</span>'
+        f'</span>'
+    )
+st.markdown(
+    f'<div class="ticker-bar"><div class="ticker-track">{items_html}</div></div>',
+    unsafe_allow_html=True
+)
 
 # ── NAVIGATION
 st.markdown("""
