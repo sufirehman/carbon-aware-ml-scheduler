@@ -18,7 +18,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body, .stApp {
@@ -60,9 +60,12 @@ html, body, .stApp {
 .stat-sub { font-size:11px; color:#475569; }
 
 /* ── CHART CARD ── */
-.chart-card { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
-.chart-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.1em; margin-bottom: 4px; }
-.chart-sub { font-size: 12px; color: #94a3b8; margin-bottom: 14px; }
+.chart-card  { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+.chart-hdr   { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.chart-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.1em; display:flex; align-items:center; gap:8px; }
+.chart-meta  { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#1e293b; }
+.chart-sub   { font-size: 12px; color: #94a3b8; margin-bottom: 14px; }
+.cdot        { width:7px; height:7px; border-radius:50%; display:inline-block; flex-shrink:0; }
 
 /* ── WINDOW LIST ── */
 .win-item {
@@ -129,6 +132,13 @@ section[data-testid="stSidebar"] * { color: #64748b !important; }
 .js-plotly-plot .plotly .bg { fill: transparent !important; }
 /* Dataframe */
 div[data-testid="stDataFrame"] { background: transparent !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -210,8 +220,14 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ── MAIN CHART
 st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 st.markdown("""
-<div class="chart-title">24-Hour Carbon Intensity Curve</div>
-<div class="chart-sub">gCO₂/kWh · hover for exact values · green = low-carbon window · red = peak window</div>
+<div class="chart-hdr">
+    <div class="chart-title">
+        <span class="cdot" style="background:#22c55e"></span>Actual
+        <span class="cdot" style="background:#0ea5e9; margin-left:6px;"></span>Forecast
+        &nbsp;&middot;&nbsp; 24-Hour Carbon Intensity Curve
+    </div>
+    <div class="chart-meta">gCO&#8322;/kWh &middot; hover for values &middot; optimal window shaded</div>
+</div>
 """, unsafe_allow_html=True)
 
 fig = go.Figure()
@@ -256,8 +272,9 @@ if windows:
     fig.add_vrect(
         x0=windows[0]["start"], x1=windows[0]["end"],
         fillcolor="rgba(34,197,94,0.1)", line_color="rgba(34,197,94,0.3)", line_width=1,
-        annotation_text="★ Best Window",
-        annotation_font_color="#22c55e", annotation_font_size=11
+        annotation_text="Best Window",
+        annotation_font_color="#22c55e", annotation_font_size=11,
+        annotation_font_family="IBM Plex Mono"
     )
 
 # Peak marker
@@ -282,6 +299,7 @@ fig.update_layout(
     height=380, template="plotly_dark",
     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
     margin=dict(l=0, r=10, t=10, b=10),
+    font=dict(family="IBM Plex Mono", size=10, color="#475569"),
     xaxis=dict(showgrid=False, color="#334155",
                tickfont=dict(family="IBM Plex Mono", size=10)),
     yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.04)", color="#334155",
@@ -323,8 +341,10 @@ with col_l:
 
     card_html = (
         '<div class="chart-card">'
-        '<div class="chart-title">Optimal Scheduling Windows</div>'
-        '<div class="chart-sub">Derived from today&#39;s live forecast data</div>'
+        '<div class="chart-hdr">'
+        '<div class="chart-title"><span class="cdot" style="background:#22c55e"></span>Optimal Scheduling Windows</div>'
+        '<div class="chart-meta">from live forecast data</div>'
+        '</div>'
         + "".join(win_items) +
         '</div>'
     )
@@ -340,8 +360,10 @@ with col_r:
 
     insight_html = (
         '<div class="chart-card">'
-        '<div class="chart-title">Grid Intelligence Analysis</div>'
-        '<div class="chart-sub">CAML-TC carbon opportunity score</div>'
+        '<div class="chart-hdr">'
+        '<div class="chart-title"><span class="cdot" style="background:#22c55e"></span>Grid Intelligence Analysis</div>'
+        '<div class="chart-meta">carbon opportunity score</div>'
+        '</div>'
         '<div class="insight">'
         '<div class="ins-lbl">Today&#39;s Carbon Opportunity</div>'
         f'The UK grid shows <strong style="color:#94a3b8">&plusmn;{vol_str} gCO&#8322;/kWh</strong> volatility '

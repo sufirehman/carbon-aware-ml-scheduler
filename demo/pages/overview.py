@@ -72,7 +72,6 @@ html, body, .stApp {
     font-size: 52px; font-weight: 600;
     color: #22c55e; letter-spacing: -0.03em;
     line-height: 1; margin-bottom: 8px;
-    text-shadow: 0 0 32px rgba(34,197,94,0.2);
 }
 .hero-label { font-size: 14px; color: #64748b; }
 .hero-label strong { color: #94a3b8; }
@@ -88,6 +87,7 @@ html, body, .stApp {
     text-transform: uppercase; letter-spacing: 0.1em;
 }
 .strategy-badge {
+    font-family: 'IBM Plex Mono', monospace;
     display: inline-block; margin-top: 10px;
     font-size: 10px; letter-spacing: 0.1em;
     text-transform: uppercase; padding: 4px 12px;
@@ -111,7 +111,7 @@ html, body, .stApp {
 .chart-card { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; }
 .chart-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
 .chart-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.1em; display:flex; align-items:center; gap:8px; }
-.cdot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+.cdot { width:7px; height:7px; border-radius:50%; display:inline-block; flex-shrink:0; }
 .chart-meta { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#1e293b; }
 
 /* ── SYSTEM LOG ── */
@@ -132,14 +132,34 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.06) !important;
 }
 section[data-testid="stSidebar"] * { color: #64748b !important; }
-.sb-title { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#22c55e !important; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; }
+.sb-title {
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:#22c55e !important;
+    letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+}
+.sb-lbl {
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#1e293b !important;
+    letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;
+}
+.sb-info {
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:#334155 !important;
+    line-height:1.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 
 /* ── BUTTONS ── */
 div.stButton > button {
     font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 13px !important; border-radius: 8px !important;
+    font-size: 13px !important; border-radius: 6px !important;
     padding: 10px 24px !important; width: 100% !important;
-    letter-spacing: 0.04em !important; transition: all 0.2s !important;
+    letter-spacing: 0.04em !important;
+    transition: background 0.2s, box-shadow 0.2s, border-color 0.2s !important;
 }
 div.stButton > button[kind="primary"] {
     background: #22c55e !important; color: #051a0d !important; border: none !important;
@@ -170,21 +190,27 @@ st.markdown("""
 
 # ── SIDEBAR
 with st.sidebar:
-    st.markdown('<div class="sb-title">⚙ Configuration</div>', unsafe_allow_html=True)
+    st.markdown("""<div class="sb-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+        Configuration
+    </div>""", unsafe_allow_html=True)
     duration = st.slider("Training Duration (min)", 30, 240, 60, step=15)
     urgency = st.selectbox("Urgency Level", ["low", "medium", "high"], index=1,
         help="Low = maximise savings · High = run as soon as clean window appears")
     st.markdown("---")
-    st.markdown('<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#1e293b;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Data Source</div>', unsafe_allow_html=True)
-    st.markdown('<div style="font-family:IBM Plex Mono,monospace;font-size:11px;color:#334155;line-height:1.8;">National Grid ESO<br>Carbon Intensity API<br>api.carbonintensity.org.uk</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-lbl">Data Source</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-info">National Grid ESO<br>Carbon Intensity API<br>api.carbonintensity.org.uk</div>', unsafe_allow_html=True)
     st.markdown("---")
-    st.markdown('<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#1e293b;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Urgency Guide</div>', unsafe_allow_html=True)
-    st.markdown('<div style="font-family:IBM Plex Mono,monospace;font-size:11px;color:#334155;line-height:2.0;">low → max delay, max savings<br>medium → balanced default<br>high → first clean window</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-lbl">Urgency Guide</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-info">low &rarr; max delay, max savings<br>medium &rarr; balanced default<br>high &rarr; first clean window</div>', unsafe_allow_html=True)
 
 # ── RUN BUTTON
 col_btn, _ = st.columns([1, 4])
 with col_btn:
-    run = st.button("▶  Run Optimisation", type="primary")
+    run = st.button("Run Optimisation", type="primary")
 
 if run:
     with st.spinner("Querying National Grid ESO..."):
@@ -303,7 +329,8 @@ if st.session_state.get("ready"):
         fig.update_layout(
             height=290, template="plotly_dark",
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=0, r=0, t=10, b=10),
+            margin=dict(l=0, r=10, t=10, b=10),
+            font=dict(family="IBM Plex Mono", size=10, color="#475569"),
             xaxis=dict(showgrid=False, color="#334155", tickfont=dict(family="IBM Plex Mono", size=10)),
             yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.04)", color="#334155",
                        tickfont=dict(family="IBM Plex Mono", size=10), title="gCO₂/kWh"),
@@ -331,7 +358,8 @@ if st.session_state.get("ready"):
         fig2.update_layout(
             height=290, template="plotly_dark",
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            margin=dict(l=0, r=0, t=10, b=10),
+            margin=dict(l=0, r=10, t=10, b=10),
+            font=dict(family="IBM Plex Mono", size=10, color="#475569"),
             xaxis=dict(showgrid=False, color="#334155",
                        tickfont=dict(family="IBM Plex Mono", size=11)),
             yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.04)", color="#334155",
@@ -363,7 +391,7 @@ if st.session_state.get("ready"):
     # ── PDF REPORT
     r1, _ = st.columns([1, 4])
     with r1:
-        if st.button("⬇  Generate PDF Report", type="secondary"):
+        if st.button("Generate PDF Report", type="secondary"):
             file = generate_report(savings, best, worst)
             with open(file, "rb") as f:
                 st.download_button("Download Report", f, file_name="caml_tc_report.pdf",
@@ -379,11 +407,11 @@ else:
         text-align: center;
         margin-top: 12px;
     ">
-        <div style="
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 32px; color: #22c55e; opacity: 0.25;
-            margin-bottom: 20px; letter-spacing: -0.02em;
-        ">⚡</div>
+        <div style="margin-bottom:20px;display:flex;justify-content:center;opacity:0.2;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+        </div>
         <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#1e293b; letter-spacing:0.05em; text-transform:uppercase;">
             Configure training duration and urgency · then run optimisation
         </div>

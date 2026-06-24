@@ -23,7 +23,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body, .stApp {
@@ -56,9 +56,10 @@ html, body, .stApp {
 
 .method-card {
     background: #0b1520; border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px; padding: 30px 20px; text-align: center; transition: all 0.25s;
+    border-radius: 10px; padding: 28px 20px; text-align: center;
+    transition: border-color 0.2s;
 }
-.method-card:hover { background: #111e2d; border-color: rgba(255,255,255,0.12); }
+.method-card:hover { border-color: rgba(255,255,255,0.14); }
 .mc-type { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#334155; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:10px; }
 .mc-val  { font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:600; letter-spacing:-0.02em; margin-bottom:4px; }
 .mc-unit { font-size:11px; color:#64748b; margin-bottom:16px; }
@@ -67,11 +68,14 @@ html, body, .stApp {
 .mb-a { color:#f59e0b; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.18); }
 .mb-g { color:#22c55e; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); }
 
-.chart-card { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
-.chart-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:16px; }
+.chart-card  { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+.chart-hdr   { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.chart-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.1em; display:flex; align-items:center; gap:8px; }
+.chart-meta  { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#1e293b; }
+.cdot        { width:7px; height:7px; border-radius:50%; display:inline-block; flex-shrink:0; }
 
 .comp-section { background: #0b1520; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
-.comp-title { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 20px; }
+.comp-title { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#94a3b8; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:20px; }
 .comp-row { margin-bottom: 16px; }
 .comp-labels { display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#475569; margin-bottom:6px; }
 .comp-track { background:rgba(255,255,255,0.04); border-radius:4px; height:8px; overflow:hidden; }
@@ -99,12 +103,26 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.06) !important;
 }
 section[data-testid="stSidebar"] * { color: #64748b !important; }
+.sb-title {
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:#f59e0b !important;
+    letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+}
+.sb-lbl {
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#1e293b !important;
+    letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;
+}
+.sb-info {
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:#334155 !important;
+    line-height:1.85;
+}
 
 div.stButton > button {
     font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 13px !important; border-radius: 8px !important;
+    font-size: 13px !important; border-radius: 6px !important;
     padding: 10px 24px !important; width: 100% !important;
-    letter-spacing: 0.04em !important; transition: all 0.2s !important;
+    letter-spacing: 0.04em !important;
+    transition: background 0.2s, box-shadow 0.2s, border-color 0.2s !important;
 }
 div.stButton > button[kind="primary"] {
     background: #22c55e !important; color: #051a0d !important; border: none !important;
@@ -115,6 +133,13 @@ div.stButton > button[kind="primary"]:hover {
 .js-plotly-plot .plotly .bg { fill: transparent !important; }
 div[data-testid="stProgress"] > div { background: rgba(34,197,94,0.12) !important; }
 div[data-testid="stProgress"] > div > div { background: #22c55e !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -127,19 +152,25 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.markdown('<div style="font-family:IBM Plex Mono,monospace;font-size:11px;color:#f59e0b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;">&#9881; Experiment Config</div>', unsafe_allow_html=True)
+    st.markdown("""<div class="sb-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+        Experiment Config
+    </div>""", unsafe_allow_html=True)
     runs = st.selectbox("Runs per strategy", [3, 5, 10], index=1,
         help="More runs = more statistically stable results")
     noise_level = st.slider("Grid noise sigma (gCO2/kWh)", 0, 25, 6,
         help="Simulated forecast uncertainty added to real grid data.")
     st.markdown("---")
-    st.markdown('<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#1e293b;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Methodology</div>', unsafe_allow_html=True)
-    st.markdown("""<div style="font-family:IBM Plex Mono,monospace;font-size:11px;color:#334155;line-height:1.9;">
+    st.markdown('<div class="sb-lbl">Methodology</div>', unsafe_allow_html=True)
+    st.markdown("""<div class="sb-info">
         Emissions = carbon intensity<br>
-        of chosen slot x energy used.<br><br>
+        of chosen slot &times; energy used.<br><br>
         Each strategy picks a different<br>
         execution time; the difference<br>
-        in CO2 is the scheduling gain.
+        in CO&#8322; is the scheduling gain.
     </div>""", unsafe_allow_html=True)
 
 def train_function():
@@ -305,7 +336,10 @@ with main_col:
         chart_c1, chart_c2 = st.columns(2)
 
         with chart_c1:
-            st.markdown('<div class="chart-card"><div class="chart-title">Average Emissions by Strategy &middot; g CO&#8322;</div>', unsafe_allow_html=True)
+            st.markdown("""<div class="chart-card"><div class="chart-hdr">
+                <div class="chart-title"><span class="cdot" style="background:#f59e0b"></span>Average Emissions by Strategy</div>
+                <div class="chart-meta">g CO&#8322;</div>
+            </div>""", unsafe_allow_html=True)
             fig = go.Figure()
             fig.add_trace(go.Bar(
                 x=["Baseline", "Heuristic", "RL Agent"],
@@ -319,7 +353,8 @@ with main_col:
             fig.update_layout(
                 height=260, template="plotly_dark",
                 paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                margin=dict(l=0, r=0, t=8, b=8),
+                margin=dict(l=0, r=10, t=8, b=8),
+                font=dict(family="IBM Plex Mono", size=10, color="#475569"),
                 xaxis=dict(showgrid=False, color="#475569",
                            tickfont=dict(family="IBM Plex Mono", size=12)),
                 yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.04)",
@@ -333,7 +368,10 @@ with main_col:
         with chart_c2:
             raw_df = results.get("raw", None)
             if raw_df is not None and len(raw_df) > 1:
-                st.markdown('<div class="chart-card"><div class="chart-title">Per-Run Breakdown &middot; g CO&#8322;</div>', unsafe_allow_html=True)
+                st.markdown("""<div class="chart-card"><div class="chart-hdr">
+                    <div class="chart-title"><span class="cdot" style="background:#f59e0b"></span>Per-Run Breakdown</div>
+                    <div class="chart-meta">g CO&#8322; &middot; CodeCarbon</div>
+                </div>""", unsafe_allow_html=True)
                 fig2 = go.Figure()
                 runs_x = raw_df["run"].tolist()
                 for col_name, color, label in [
@@ -353,7 +391,8 @@ with main_col:
                 fig2.update_layout(
                     height=260, template="plotly_dark",
                     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                    margin=dict(l=0, r=0, t=8, b=8),
+                    margin=dict(l=0, r=10, t=8, b=8),
+                    font=dict(family="IBM Plex Mono", size=10, color="#475569"),
                     xaxis=dict(showgrid=False, color="#475569",
                                tickfont=dict(family="IBM Plex Mono", size=10),
                                title="Run", dtick=1),
@@ -387,7 +426,13 @@ with main_col:
         st.markdown("""
         <div style="background:#0b1520; border:1px solid rgba(255,255,255,0.06);
              border-radius:14px; padding:80px 40px; text-align:center; margin-top:12px;">
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:28px; color:#f59e0b; opacity:0.2; margin-bottom:20px;">&#129302;</div>
+            <div style="margin-bottom:20px;display:flex;justify-content:center;opacity:0.2;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+            </div>
             <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#1e293b; letter-spacing:0.06em; text-transform:uppercase;">
                 Configure experiment parameters &middot; then run to compare strategies
             </div>

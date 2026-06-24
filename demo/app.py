@@ -27,35 +27,12 @@ html, body, .stApp {
     content: '';
     position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image:
-        linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(34,197,94,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.025) 1px, transparent 1px);
     background-size: 52px 52px;
 }
 
-.ticker-bar {
-    position: relative; z-index: 10;
-    background: #0a1018;
-    border-bottom: 1px solid rgba(34,197,94,0.12);
-    padding: 9px 0;
-    overflow: hidden;
-}
-.ticker-track {
-    display: inline-flex; gap: 56px;
-    animation: scroll 35s linear infinite;
-    white-space: nowrap;
-}
-@keyframes scroll { from { transform: translateX(0) } to { transform: translateX(-50%) } }
-.t-item {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px; letter-spacing: 0.06em;
-}
-.t-key   { color: #334155; text-transform: uppercase; }
-.t-val   { color: #94a3b8; font-weight: 500; }
-.t-up    { color: #22c55e; }
-.t-dn    { color: #ef4444; }
-.t-pipe  { color: #1e293b; }
-
+/* ── NAVIGATION ── */
 .top-nav {
     position: sticky; top: 0; z-index: 50;
     display: flex; align-items: center; justify-content: space-between;
@@ -71,71 +48,84 @@ html, body, .stApp {
     letter-spacing: 0.06em;
 }
 .brand-dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: #22c55e;
-    box-shadow: 0 0 12px rgba(34,197,94,0.7);
-    animation: pulse 2.4s ease-in-out infinite;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #22c55e; flex-shrink: 0;
 }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
 .nav-links {
     display: flex; gap: 32px;
-    font-size: 12px;
     font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.05em;
+    font-size: 12px; letter-spacing: 0.05em;
 }
 .nav-link {
     color: #94a3b8 !important;
     text-decoration: none !important;
     transition: color 0.2s;
-    letter-spacing: 0.05em;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
 }
 .nav-link:hover { color: #22c55e !important; }
+.nav-link:focus-visible { color: #22c55e !important; outline: none; }
 .nav-pill {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; color: #22c55e;
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.22);
-    padding: 6px 16px; border-radius: 20px;
-    display: flex; align-items: center; gap: 7px;
-    letter-spacing: 0.06em;
+    font-size: 11px; color: #475569;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 5px 14px; border-radius: 6px;
+    letter-spacing: 0.05em;
 }
 
+/* ── HERO ── */
 .hero-wrap {
-    max-width: 900px; margin: 0 auto;
-    padding: 96px 32px 72px;
-    text-align: center;
+    max-width: 860px; margin: 0 auto;
+    padding: 80px 32px 60px;
     position: relative; z-index: 1;
 }
-.hero-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; color: #22c55e;
-    background: rgba(34,197,94,0.07);
-    border: 1px solid rgba(34,197,94,0.18);
-    padding: 6px 18px; border-radius: 20px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 32px;
-}
-.hero-h1 {
-    font-size: 62px; font-weight: 700;
-    line-height: 1.08; letter-spacing: -0.03em;
-    color: #f1f5f9; margin-bottom: 24px;
-}
-.hero-h1 .accent { color: #22c55e; }
-.hero-sub {
-    font-size: 18px; font-weight: 300;
-    color: #64748b; line-height: 1.75;
-    max-width: 620px; margin: 0 auto 16px;
-}
-.hero-cite {
+.hero-cite-top {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; color: #334155;
-    letter-spacing: 0.06em; margin-bottom: 48px;
+    letter-spacing: 0.06em; margin-bottom: 28px;
 }
-.hero-cite a { color: #22c55e; text-decoration: none; }
+.hero-cite-top a { color: #475569; text-decoration: none; }
+.hero-cite-top a:hover { color: #22c55e; }
+.hero-h1 {
+    font-size: 40px; font-weight: 700;
+    line-height: 1.15; letter-spacing: -0.025em;
+    color: #f1f5f9; margin-bottom: 20px;
+}
+.hero-sub {
+    font-size: 16px; font-weight: 300;
+    color: #64748b; line-height: 1.8;
+    max-width: 640px; margin-bottom: 12px;
+}
+.hero-install {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: #334155;
+    letter-spacing: 0.04em; margin-bottom: 36px;
+}
+.hero-install code { color: #475569; }
+.hero-cta {
+    display: flex; align-items: center; gap: 14px;
+}
+.btn-primary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
+    color: #051a0d; background: #22c55e;
+    border: none; border-radius: 6px;
+    padding: 10px 24px; text-decoration: none;
+    transition: background 0.2s; display: inline-block;
+}
+.btn-primary:hover { background: #16a34a; }
+.btn-primary:focus-visible { outline: 2px solid rgba(34,197,94,0.5); outline-offset: 2px; }
+.btn-secondary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; font-weight: 400; letter-spacing: 0.04em;
+    color: #64748b; background: transparent;
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+    padding: 10px 24px; text-decoration: none;
+    transition: color 0.2s, border-color 0.2s; display: inline-block;
+}
+.btn-secondary:hover { color: #e2e8f0 !important; border-color: rgba(255,255,255,0.2); }
+.btn-secondary:focus-visible { outline: 2px solid rgba(255,255,255,0.2); outline-offset: 2px; }
 
+/* ── IMPACT STRIP ── */
 .impact-row {
     display: grid; grid-template-columns: repeat(4, 1fr);
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -144,18 +134,17 @@ html, body, .stApp {
     position: relative; z-index: 1;
 }
 .impact-cell {
-    padding: 44px 20px; text-align: center;
+    padding: 40px 20px; text-align: center;
     border-right: 1px solid rgba(255,255,255,0.06);
-    transition: background 0.25s;
+    transition: background 0.2s;
 }
 .impact-cell:last-child { border-right: none; }
-.impact-cell:hover { background: rgba(34,197,94,0.035); }
+.impact-cell:hover { background: rgba(34,197,94,0.025); }
 .impact-n {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 42px; font-weight: 600;
+    font-size: 36px; font-weight: 600;
     color: #22c55e; display: block; margin-bottom: 8px;
     letter-spacing: -0.02em;
-    text-shadow: 0 0 28px rgba(34,197,94,0.25);
 }
 .impact-l {
     font-size: 11px; color: #475569;
@@ -163,7 +152,8 @@ html, body, .stApp {
     line-height: 1.55;
 }
 
-.section { max-width: 1080px; margin: 0 auto; padding: 72px 32px; position: relative; z-index: 1; }
+/* ── SECTIONS ── */
+.section { max-width: 1080px; margin: 0 auto; padding: 64px 32px; position: relative; z-index: 1; }
 .section-eye {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px; color: #22c55e;
@@ -173,152 +163,124 @@ html, body, .stApp {
 }
 .section-eye::before { content:''; display:inline-block; width:24px; height:1px; background:#22c55e; }
 .section-h2 {
-    font-size: 34px; font-weight: 600;
-    color: #f1f5f9; letter-spacing: -0.015em; margin-bottom: 8px;
+    font-size: 28px; font-weight: 600;
+    color: #f1f5f9; letter-spacing: -0.015em; margin-bottom: 6px;
 }
-.section-sub { font-size: 14px; color: #64748b; margin-bottom: 40px; }
+.section-sub { font-size: 13px; color: #64748b; margin-bottom: 36px; }
 
+/* ── PIPELINE ── */
 .pipeline {
     display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr;
-    align-items: center; gap: 0;
-    margin: 48px 0;
+    align-items: center; margin: 40px 0;
 }
 .pipe-step {
     background: #0c1420;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px; padding: 28px 20px;
-    text-align: center; transition: all 0.25s;
+    border-radius: 10px; padding: 24px 18px;
+    text-align: center; transition: border-color 0.2s;
 }
-.pipe-step:hover { border-color: rgba(34,197,94,0.25); background: #111e2d; }
-.pipe-icon { font-size: 26px; margin-bottom: 12px; }
+.pipe-step:hover { border-color: rgba(34,197,94,0.2); }
+.pipe-icon { margin-bottom: 14px; display: flex; justify-content: center; }
 .pipe-title {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px; color: #94a3b8;
+    font-size: 11px; color: #94a3b8;
     font-weight: 500; margin-bottom: 6px;
     text-transform: uppercase; letter-spacing: 0.06em;
 }
 .pipe-desc { font-size: 12px; color: #475569; line-height: 1.6; }
-.pipe-arrow { text-align: center; color: #1e3a2a; font-size: 18px; }
+.pipe-arrow { text-align: center; color: #1e3a2a; font-size: 16px; }
 
-.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+/* ── FEATURE GRID ── */
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .feat-card {
     background: #0c1420;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px; padding: 30px 24px;
-    transition: all 0.25s; position: relative; overflow: hidden;
+    border-radius: 10px; padding: 26px 22px;
+    transition: border-color 0.2s;
 }
-.feat-card::after {
-    content: ''; position: absolute;
-    bottom: 0; left: 0; right: 0; height: 2px;
-    background: transparent; transition: background 0.25s;
-}
-.feat-card:hover { border-color: rgba(34,197,94,0.2); transform: translateY(-3px); }
-.feat-card:hover::after { background: #22c55e; }
-.feat-icon { font-size: 22px; margin-bottom: 14px; }
-.feat-title { font-size: 16px; font-weight: 600; color: #e2e8f0; margin-bottom: 10px; }
+.feat-card:hover { border-color: rgba(255,255,255,0.14); }
+.feat-icon { margin-bottom: 14px; }
+.feat-title { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 8px; }
 .feat-body { font-size: 13px; color: #64748b; line-height: 1.7; }
 
+/* ── RESULTS TABLE ── */
 .results-strip {
-    background: #0a1018;
+    background: #040810;
     border-top: 1px solid rgba(255,255,255,0.06);
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 64px 0;
+    padding: 56px 0;
 }
 .results-inner { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
 .results-table {
     width: 100%; border-collapse: collapse;
     font-family: 'IBM Plex Mono', monospace;
-    margin-top: 32px;
+    margin-top: 28px;
 }
 .results-table th {
     font-size: 10px; color: #334155;
     text-transform: uppercase; letter-spacing: 0.1em;
-    padding: 0 20px 14px; text-align: left;
+    padding: 0 20px 12px; text-align: left;
     border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .results-table td {
     font-size: 13px; color: #94a3b8;
-    padding: 16px 20px;
+    padding: 14px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 .results-table tr:last-child td { border-bottom: none; }
 .td-strategy { color: #f1f5f9; font-weight: 500; }
 .td-best { color: #22c55e; font-weight: 600; }
-.bar-wrap { background: rgba(255,255,255,0.04); border-radius: 3px; height: 6px; width: 140px; }
+.bar-wrap { background: rgba(255,255,255,0.04); border-radius: 3px; height: 5px; width: 120px; }
 .bar-fill { height: 100%; border-radius: 3px; }
 
+/* ── RESEARCH CARD ── */
 .research-card {
     background: #0c1420;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px; padding: 48px;
+    border-radius: 12px; padding: 40px;
     display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr;
-    gap: 40px; align-items: start;
+    gap: 36px; align-items: start;
 }
 .r-divider { background: rgba(255,255,255,0.06); }
 .r-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px; color: #22c55e;
     text-transform: uppercase; letter-spacing: 0.12em;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
-.r-h3 { font-size: 17px; font-weight: 600; color: #f1f5f9; margin-bottom: 10px; }
+.r-h3 { font-size: 15px; font-weight: 600; color: #f1f5f9; margin-bottom: 10px; }
 .r-body { font-size: 13px; color: #64748b; line-height: 1.75; }
 
+/* ── FOOTER ── */
 .site-footer {
     border-top: 1px solid rgba(255,255,255,0.06);
     background: #04070c;
-    padding: 32px 48px;
+    padding: 28px 48px;
     display: flex; justify-content: space-between; align-items: center;
 }
 .footer-brand {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px; color: #1e293b;
+    font-size: 11px; color: #1e293b;
 }
 .footer-brand strong { color: #334155; }
 .footer-links {
-    display: flex; gap: 24px;
+    display: flex; gap: 20px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; color: #1e293b;
+    font-size: 11px;
 }
 .footer-links a { color: #334155; text-decoration: none; }
 .footer-links a:hover { color: #22c55e; }
 
-.hero-cta {
-    display: flex; align-items: center; justify-content: center;
-    gap: 14px; margin-top: 40px;
-}
-.btn-primary {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
-    color: #051a0d; background: #22c55e;
-    border: none; border-radius: 8px;
-    padding: 12px 28px; text-decoration: none;
-    transition: background 0.2s, transform 0.15s;
-    display: inline-block;
-}
-.btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
-.btn-secondary {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px; font-weight: 400; letter-spacing: 0.04em;
-    color: #22c55e; background: rgba(34,197,94,0.06);
-    border: 1px solid rgba(34,197,94,0.28); border-radius: 8px;
-    padding: 12px 28px; text-decoration: none;
-    transition: color 0.2s, border-color 0.2s, background 0.2s;
-    display: inline-block;
-}
-.btn-secondary:hover { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.5); }
-
+/* ── Streamlit overrides ── */
 div.stButton > button {
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 13px !important; font-weight: 500 !important;
-    border-radius: 8px !important; padding: 10px 28px !important;
-    letter-spacing: 0.04em !important;
-    transition: all 0.2s !important;
+    border-radius: 6px !important; padding: 10px 28px !important;
+    letter-spacing: 0.04em !important; transition: all 0.2s !important;
     width: 100% !important;
 }
 div.stButton > button[kind="primary"] {
-    background: #22c55e !important; color: #051a0d !important;
-    border: none !important;
+    background: #22c55e !important; color: #051a0d !important; border: none !important;
 }
 div.stButton > button[kind="primary"]:hover { background: #16a34a !important; }
 div.stButton > button[kind="secondary"] {
@@ -326,165 +288,228 @@ div.stButton > button[kind="secondary"] {
     border: 1px solid rgba(255,255,255,0.1) !important;
 }
 div.stButton > button[kind="secondary"]:hover {
-    color: #e2e8f0 !important;
-    border-color: rgba(255,255,255,0.2) !important;
+    color: #e2e8f0 !important; border-color: rgba(255,255,255,0.2) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
 
-ticker_items = [
-    ("CARBON NOW",      "178 gCO₂/kWh", "▼ 12%",  "up"),
-    ("WIND CAPACITY",   "32.4 GW",       "▲ 4.1%", "up"),
-    ("SOLAR OUTPUT",    "7.1 GW",        "▲ 2.2%", "up"),
-    ("GRID DEMAND",     "38.2 GW",       "▼ 1.0%", "dn"),
-    ("COAL ONLINE",     "0 GW",          "NET ZERO","up"),
-    ("RENEWABLES MIX",  "58%",           "▲ 6pt",  "up"),
-    ("FORECAST HORIZON","24 hr",         "LIVE",    "up"),
-]
-items_html = ""
-for label, val, delta, d in ticker_items * 2:
-    cls = "t-up" if d == "up" else "t-dn"
-    items_html += f"""
-    <span class="t-item">
-        <span class="t-key">{label}</span>
-        <span class="t-val">{val}</span>
-        <span class="{cls}">{delta}</span>
-        <span class="t-pipe">|</span>
-    </span>"""
-st.markdown(f'<div class="ticker-bar"><div class="ticker-track">{items_html}</div></div>', unsafe_allow_html=True)
-
+# ── NAVIGATION
 st.markdown("""
 <div class="top-nav">
-    <div class="nav-brand"><span class="brand-dot"></span> CAML-TC</div>
+    <div class="nav-brand">
+        <span class="brand-dot"></span>
+        CAML-TC
+    </div>
     <div class="nav-links">
         <a class="nav-link" href="/overview">Dashboard</a>
         <a class="nav-link" href="/forecast">Forecast</a>
         <a class="nav-link" href="/simulation">Simulation</a>
-        <a class="nav-link" href="https://pypi.org/project/caml-tc" target="_blank">PyPI &nearr;</a>
+        <a class="nav-link" href="https://pypi.org/project/caml-tc" target="_blank">PyPI &#8599;</a>
     </div>
-    <div class="nav-pill"><span class="brand-dot"></span> UK NATIONAL GRID &middot; LIVE</div>
+    <div class="nav-pill">UK National Grid &middot; ESO API</div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("""<div class="hero-wrap">
-    <div class="hero-eyebrow"><span class="brand-dot"></span> IEEE EEEIC 2026 &middot; Peer-Reviewed Research</div>
+# ── HERO
+st.markdown("""
+<div class="hero-wrap">
+    <div class="hero-cite-top">
+        IEEE EEEIC 2026 &nbsp;&middot;&nbsp; Scopus-indexed
+        &nbsp;&middot;&nbsp; Ulster University &amp; Solent University (via QA)
+    </div>
     <h1 class="hero-h1">
-        The carbon cost of AI<br>is <span class="accent">a matter of timing</span>
+        The carbon cost of ML training<br>is a matter of timing
     </h1>
     <p class="hero-sub">
-        CAML-TC uses real-time UK National Grid data and a risk-aware reinforcement learning agent 
-        to shift ML training into low-carbon windows &mdash; cutting emissions by up to 34% without 
-        touching a single line of model code.
+        CAML-TC uses real-time UK National Grid carbon data and a risk-aware Q-learning agent
+        to temporally shift ML training workloads into low-carbon grid windows &mdash; reducing
+        emissions by 28&ndash;34% in realistic conditions and over 50% under high grid variability.
     </p>
-    <p class="hero-cite">
-        Published at <a href="https://ieeexplore.ieee.org" target="_blank">IEEE EEEIC 2026</a> &middot;
-        Q1, Scopus-indexed &middot; <code>pip install caml-tc</code>
+    <p class="hero-install">
+        <code>pip install caml-tc</code> &nbsp;&middot;&nbsp; MIT License &nbsp;&middot;&nbsp; Python 3.8+
     </p>
     <div class="hero-cta">
         <a class="btn-primary" href="/overview" target="_self">Open Dashboard &rarr;</a>
-        <a class="btn-secondary" href="/simulation" target="_self">Run Simulation Lab</a>
+        <a class="btn-secondary" href="/simulation" target="_self">Run Simulation</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# ── IMPACT STRIP
 st.markdown("""
 <div class="impact-row">
     <div class="impact-cell">
-        <span class="impact-n">↓ 34%</span>
-        <span class="impact-l">CO₂ reduction<br>realistic conditions</span>
+        <span class="impact-n">28&ndash;34%</span>
+        <span class="impact-l">CO&#8322; reduction<br>realistic UK grid conditions</span>
     </div>
     <div class="impact-cell">
-        <span class="impact-n">&gt; 50%</span>
-        <span class="impact-l">CO₂ reduction<br>optimal low-variability</span>
+        <span class="impact-n">&gt;50%</span>
+        <span class="impact-l">CO&#8322; reduction<br>high grid variability</span>
     </div>
     <div class="impact-cell">
         <span class="impact-n">8,000</span>
-        <span class="impact-l">RL training episodes<br>on real UK grid data</span>
+        <span class="impact-l">RL training episodes<br>real UK National Grid data</span>
     </div>
     <div class="impact-cell">
         <span class="impact-n">24 hr</span>
-        <span class="impact-l">forecast horizon<br>with uncertainty decay</span>
+        <span class="impact-l">forecast horizon<br>exponential confidence decay</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# ── SYSTEM ARCHITECTURE
 st.markdown("""
 <div class="section">
     <div class="section-eye">System Architecture</div>
     <h2 class="section-h2">From raw grid data to scheduling decision</h2>
-    <p class="section-sub">A closed-loop pipeline — no manual intervention required</p>
+    <p class="section-sub">A closed-loop pipeline operating on real UK National Grid ESO data at 30-minute resolution</p>
     <div class="pipeline">
         <div class="pipe-step">
-            <div class="pipe-icon">📡</div>
+            <div class="pipe-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                    <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                    <circle cx="12" cy="20" r="1" fill="#22c55e" stroke="none"/>
+                </svg>
+            </div>
             <div class="pipe-title">Grid API</div>
-            <div class="pipe-desc">Real-time + 24h forecast from UK National Grid ESO at 30-min resolution</div>
+            <div class="pipe-desc">Real-time + 24 h forecast from National Grid ESO at 30-min resolution</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-step">
-            <div class="pipe-icon">🧮</div>
+            <div class="pipe-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            </div>
             <div class="pipe-title">Carbon Intelligence</div>
-            <div class="pipe-desc">Exponential confidence decay · peak/low detection · uncertainty modelling</div>
+            <div class="pipe-desc">Exponential confidence decay &middot; peak/low detection &middot; uncertainty modelling</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-step">
-            <div class="pipe-icon">🤖</div>
+            <div class="pipe-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="4" width="16" height="16" rx="2"/>
+                    <rect x="9" y="9" width="6" height="6"/>
+                    <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                    <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                    <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+                    <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+                </svg>
+            </div>
             <div class="pipe-title">Scheduling Engine</div>
-            <div class="pipe-desc">Heuristic baseline + Q-learning RL agent · automatically selects best strategy</div>
+            <div class="pipe-desc">Heuristic baseline + Q-learning RL agent &middot; auto-selects strategy by grid volatility</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-step">
-            <div class="pipe-icon">✅</div>
+            <div class="pipe-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+            </div>
             <div class="pipe-title">Optimal Window</div>
-            <div class="pipe-desc">Execution window with quantified CO₂ savings vs immediate baseline</div>
+            <div class="pipe-desc">Execution window with quantified CO&#8322; savings vs immediate baseline</div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# ── KEY CONTRIBUTIONS
 st.markdown("""
 <div class="section" style="padding-top: 0;">
-    <div class="section-eye">Key Innovations</div>
-    <h2 class="section-h2">What makes CAML-TC different</h2>
-    <p class="section-sub">Built on peer-reviewed ML research, not just heuristics</p>
+    <div class="section-eye">Key Contributions</div>
+    <h2 class="section-h2">Research contributions</h2>
+    <p class="section-sub">Peer-reviewed contributions covering RL reward design, uncertainty modelling, and reproducible emissions measurement</p>
     <div class="feat-grid">
         <div class="feat-card">
-            <div class="feat-icon">⚖️</div>
+            <div class="feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                    <path d="M7 21h10"/><line x1="12" y1="3" x2="12" y2="21"/>
+                    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+                </svg>
+            </div>
             <div class="feat-title">Multi-objective RL reward</div>
-            <div class="feat-body">Jointly optimises carbon intensity, forecast uncertainty, delay penalty, and deadline constraints — not just the lowest carbon slot.</div>
+            <div class="feat-body">Jointly optimises carbon intensity, forecast uncertainty, delay penalty, and deadline constraints &mdash; not just the lowest-carbon slot.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">📉</div>
+            <div class="feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/>
+                    <polyline points="16 17 22 17 22 11"/>
+                </svg>
+            </div>
             <div class="feat-title">Exponential confidence decay</div>
-            <div class="feat-body"><code>wₜ = exp(−λ·Δt)</code> — prevents over-commitment to unreliable long-horizon predictions. The further ahead, the less the agent trusts the forecast.</div>
+            <div class="feat-body"><code>w&#7511; = exp(&minus;&lambda;&middot;&Delta;t)</code> &mdash; prevents over-commitment to unreliable long-horizon predictions. Forecast trust decreases monotonically with horizon distance.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">🎲</div>
+            <div class="feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 3 21 3 21 8"/>
+                    <line x1="4" y1="20" x2="21" y2="3"/>
+                    <polyline points="21 16 21 21 16 21"/>
+                    <line x1="15" y1="15" x2="21" y2="21"/>
+                    <line x1="4" y1="4" x2="9" y2="9"/>
+                </svg>
+            </div>
             <div class="feat-title">Stochastic noise injection</div>
-            <div class="feat-body">Training injects real grid variability noise, forcing the RL agent to learn robust policies — not just patterns that work on clean signals.</div>
+            <div class="feat-body">Training injects real grid variability noise, forcing the RL agent to learn robust policies that generalise beyond clean-signal conditions.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">🧠</div>
+            <div class="feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="4" width="16" height="16" rx="2"/>
+                    <rect x="9" y="9" width="6" height="6"/>
+                    <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                    <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                    <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+                    <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+                </svg>
+            </div>
             <div class="feat-title">Hybrid strategy selection</div>
-            <div class="feat-body">Heuristic scheduler handles stable grids. RL agent activates when volatility exceeds threshold — where static rules break down and learning matters most.</div>
+            <div class="feat-body">Heuristic scheduler handles stable grids. RL agent activates when volatility exceeds threshold (&sigma; &gt; 30 gCO&#8322;/kWh) &mdash; where static rules break down.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">🧪</div>
+            <div class="feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+            </div>
             <div class="feat-title">CodeCarbon validation</div>
-            <div class="feat-body">Results validated with CodeCarbon emissions measurement — not simulated numbers. Reproducible, peer-reviewed experimental pipeline.</div>
+            <div class="feat-body">Results validated with CodeCarbon emissions measurement &mdash; not simulated numbers. Reproducible experimental pipeline across 5 runs.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon">📦</div>
+            <div class="feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m7.5 4.27 9 5.15"/>
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                    <path d="m3.3 7 8.7 5 8.7-5"/>
+                    <line x1="12" y1="22" x2="12" y2="12"/>
+                </svg>
+            </div>
             <div class="feat-title">pip-installable library</div>
-            <div class="feat-body">Drop into any existing ML pipeline in three lines of code. No infrastructure changes. No model retraining. Works with PyTorch, TensorFlow, and custom loops.</div>
+            <div class="feat-body">Integrates with any existing training loop in three lines of code. No infrastructure changes, no model retraining. Compatible with PyTorch, TensorFlow, and custom loops.</div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# ── VALIDATED RESULTS
 st.markdown("""
 <div class="results-strip">
     <div class="results-inner">
-        <div class="section-eye" style="margin-bottom:12px;">Validated Results</div>
+        <div class="section-eye" style="margin-bottom:10px;">Validated Results</div>
         <h2 class="section-h2">Tested on real UK National Grid data</h2>
         <p class="section-sub">Emissions measured with CodeCarbon across 5 experimental runs</p>
         <table class="results-table">
@@ -492,8 +517,8 @@ st.markdown("""
                 <tr>
                     <th>Strategy</th>
                     <th>Conditions</th>
-                    <th>CO₂ Reduction</th>
-                    <th>Relative Performance</th>
+                    <th>CO&#8322; Reduction</th>
+                    <th>Relative Emissions</th>
                     <th>Notes</th>
                 </tr>
             </thead>
@@ -503,7 +528,7 @@ st.markdown("""
                     <td>Immediate execution</td>
                     <td style="color:#ef4444;">0%</td>
                     <td><div class="bar-wrap"><div class="bar-fill" style="width:100%;background:#ef4444;"></div></div></td>
-                    <td>Industry default — no carbon awareness</td>
+                    <td>Industry default &mdash; no carbon awareness</td>
                 </tr>
                 <tr>
                     <td class="td-strategy" style="color:#f59e0b;">Heuristic</td>
@@ -515,14 +540,14 @@ st.markdown("""
                 <tr>
                     <td class="td-strategy">RL Agent (CAML-TC)</td>
                     <td>Realistic UK grid</td>
-                    <td class="td-best">28 – 34%</td>
+                    <td class="td-best">28&ndash;34%</td>
                     <td><div class="bar-wrap"><div class="bar-fill" style="width:66%;background:#22c55e;"></div></div></td>
                     <td>Matches heuristic on stable grids</td>
                 </tr>
                 <tr>
                     <td class="td-strategy">RL Agent (CAML-TC)</td>
                     <td>High volatility / optimal</td>
-                    <td class="td-best">> 50%</td>
+                    <td class="td-best">&gt;50%</td>
                     <td><div class="bar-wrap"><div class="bar-fill" style="width:48%;background:#22c55e;"></div></div></td>
                     <td>RL outperforms heuristic where it matters most</td>
                 </tr>
@@ -532,43 +557,45 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# ── RESEARCH CONTEXT
 st.markdown("""
 <div class="section">
     <div class="section-eye">Research Context</div>
     <h2 class="section-h2">Bridging the gap between industry and research</h2>
-    <div class="research-card" style="margin-top:28px;">
+    <div class="research-card" style="margin-top:24px;">
         <div>
             <div class="r-label">The Problem</div>
             <h3 class="r-h3">Proprietary and inaccessible</h3>
-            <p class="r-body">Google has run carbon-aware compute shifting internally since 2020. Microsoft released a partial SDK. Neither is available to independent researchers, university labs, or individual engineers — the people responsible for a rapidly growing share of AI compute.</p>
+            <p class="r-body">Google has run carbon-aware compute shifting internally since 2020. Microsoft released a partial SDK. Neither is available to independent researchers, university labs, or individual engineers &mdash; the people responsible for a rapidly growing share of AI compute.</p>
         </div>
         <div class="r-divider"></div>
         <div>
             <div class="r-label">The Approach</div>
             <h3 class="r-h3">Open, deployable, reproducible</h3>
-            <p class="r-body">CAML-TC is a lightweight RL-enhanced carbon optimisation layer that runs on top of any existing training loop. It uses the UK government's own free public carbon intensity API — infrastructure already built for exactly this purpose.</p>
+            <p class="r-body">CAML-TC is a lightweight RL-enhanced carbon optimisation layer that runs on top of any existing training loop. It uses the UK government&rsquo;s free public Carbon Intensity API &mdash; infrastructure already built for exactly this purpose.</p>
         </div>
         <div class="r-divider"></div>
         <div>
             <div class="r-label">UK Net Zero Alignment</div>
             <h3 class="r-h3">Data centres are a growing problem</h3>
-            <p class="r-body">UK data centres and AI infrastructure are among the fastest-growing electricity consumers. CAML-TC provides the scheduling intelligence layer that was missing — making carbon-aware ML accessible to anyone, without changing a single line of model code.</p>
+            <p class="r-body">UK data centres and AI infrastructure are among the fastest-growing electricity consumers. CAML-TC provides a scheduling intelligence layer missing from the open-source ecosystem, making carbon-aware ML accessible without changing model code.</p>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# ── FOOTER
 st.markdown("""
 <div class="site-footer">
     <div class="footer-brand">
-        <strong>CAML-TC</strong> · Carbon-Aware ML Training Controller · 
-        Sufiyan Ul Rehman · Ulster University &amp; Solent University (via QA)
+        <strong>CAML-TC</strong> &middot; Carbon-Aware ML Training Controller &middot;
+        Sufiyan Ul Rehman &middot; Ulster University &amp; Solent University (via QA)
     </div>
     <div class="footer-links">
         <a href="https://pypi.org/project/caml-tc" target="_blank">PyPI</a>
         <a href="https://github.com/sufirehman/carbon-aware-ml-scheduler" target="_blank">GitHub</a>
-        <a href="https://ieeexplore.ieee.org" target="_blank">IEEE Paper</a>
-        <span>MIT License · 2026</span>
+        <a href="https://ieeexplore.ieee.org" target="_blank">IEEE EEEIC 2026</a>
+        <span style="color:#1e293b;">MIT License &middot; 2026</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
